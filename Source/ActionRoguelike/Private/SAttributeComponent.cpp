@@ -12,6 +12,15 @@ USAttributeComponent::USAttributeComponent()
 	DangerousHealth = 30.0f;
 }
 
+// Called when the game starts
+void USAttributeComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// ...
+	
+}
+
 bool USAttributeComponent::ApplyHealthChange(float Delta)
 {
 	if((Health + Delta) < 0 || (Health + Delta) > MaxHealth)
@@ -25,12 +34,7 @@ bool USAttributeComponent::ApplyHealthChange(float Delta)
 	return true;
 }
 
-
-// Called when the game starts
-void USAttributeComponent::BeginPlay()
+bool USAttributeComponent::IsCharacterAlive() const
 {
-	Super::BeginPlay();
-
-	// ...
-	
+	return Health > 0.0f;
 }

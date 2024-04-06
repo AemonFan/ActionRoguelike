@@ -35,6 +35,22 @@ void ASMagicProjectile::OnActorHit(UPrimitiveComponent* HitComp, AActor* OtherAc
 	}
 }
 
+void ASMagicProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	if(OtherActor && OtherActor != GetInstigator()) // 确保角色自己生成的投射物不会对自己造成伤害
+	{
+		USAttributeComponent* OtherAttributeCom = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		if(OtherAttributeCom)
+		{
+			Explode();
+	
+			OtherAttributeCom->ApplyHealthChange(Damage);
+		}
+	}
+}
+
 // Called every frame
 void ASMagicProjectile::Tick(float DeltaTime)
 {

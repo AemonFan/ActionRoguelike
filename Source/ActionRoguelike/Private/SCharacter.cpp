@@ -68,6 +68,24 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("OpenTreasure", IE_Pressed, this, &ASCharacter::OpenTreasureChest);
 }
 
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+  
+	AttributeComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthValueChanged);
+}
+
+void ASCharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
+	float Delta, float MaxHealth, float DangerousHealth)
+{
+	//const bool bAlive = AttributeComp->IsCharacterAlive();
+	if (NewHealth <= 0.0f && Delta < 0.0f)
+	{
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		DisableInput(PC);
+	}
+}
+
 void ASCharacter::MoveForward(float value)
 {
 	FRotator ControlRot = GetControlRotation();
