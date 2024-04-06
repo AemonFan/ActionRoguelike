@@ -3,6 +3,7 @@
 #include "SMagicProjectile.h"
 
 #include "SAttributeComponent.h"
+#include "components/SphereComponent.h"
 
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
@@ -11,34 +12,13 @@ ASMagicProjectile::ASMagicProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Damage = -10.0f;
+
+	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASMagicProjectile::OnActorOverlap);
 }
 
-// Called when the game starts or when spawned
-void ASMagicProjectile::BeginPlay()
+void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Super::BeginPlay();
-	
-}
-
-void ASMagicProjectile::OnActorHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpluse, const FHitResult& Hit)
-{
-	Super::OnActorHit(HitComp, OtherActor, OtherComp, NormalImpluse, Hit);
-	
-	if(OtherActor && OtherActor != GetInstigator()) // 确保角色自己生成的投射物不会对自己造成伤害
-	{
-		USAttributeComponent* OtherAttributeCom = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
-		if(OtherAttributeCom)
-		{
-			OtherAttributeCom->ApplyHealthChange(Damage);
-		}
-	}
-}
-
-void ASMagicProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-
 	if(OtherActor && OtherActor != GetInstigator()) // 确保角色自己生成的投射物不会对自己造成伤害
 	{
 		USAttributeComponent* OtherAttributeCom = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
@@ -49,11 +29,4 @@ void ASMagicProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 			OtherAttributeCom->ApplyHealthChange(Damage);
 		}
 	}
-}
-
-// Called every frame
-void ASMagicProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
