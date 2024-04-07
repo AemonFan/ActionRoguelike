@@ -4,7 +4,8 @@
 #include "SProjectileBase.h"
 
 #include "SMagicProjectile.h"
-
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
 #include "components/SphereComponent.h"
 #include "particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -23,6 +24,9 @@ ASProjectileBase::ASProjectileBase()
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
 	EffectComp->SetupAttachment(SphereComp);
 
+	AudioComp = CreateDefaultSubobject<UAudioComponent>("Audio");
+	AudioComp->SetupAttachment(SphereComp);
+	
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
 	MovementComp->InitialSpeed = 1000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
@@ -66,9 +70,12 @@ void ASProjectileBase::Explode_Implementation()
 	// Checks the PendingKill flag to see if it is dead but memory still valid
 	if(ensure(!IsPendingKill()))
 	{
-		// Spawn 发射器，产生作用力
+		// 例子发射器，生成指定的粒子特效，爆炸效果
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
 
+		// Play 爆炸音效
+		UGameplayStatics::PlaySoundAtLocation(this,ImpactSound, GetActorLocation());
+		
 		Destroy();
 	}
 }

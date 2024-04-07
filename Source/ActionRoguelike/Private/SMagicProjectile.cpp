@@ -3,6 +3,7 @@
 #include "SMagicProjectile.h"
 
 #include "SAttributeComponent.h"
+#include "Components/AudioComponent.h"
 #include "components/SphereComponent.h"
 
 // Sets default values
