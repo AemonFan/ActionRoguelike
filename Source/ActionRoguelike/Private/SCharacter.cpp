@@ -78,6 +78,12 @@ void ASCharacter::PostInitializeComponents()
 void ASCharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth,
 	float Delta, float MaxHealth, float DangerousHealth)
 {
+	if(Delta < 0.0f)
+	{
+		// Hit Flash Material
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());		
+	}
+	
 	//const bool bAlive = AttributeComp->IsCharacterAlive();
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{

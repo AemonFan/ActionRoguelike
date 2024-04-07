@@ -29,7 +29,8 @@ bool USAttributeComponent::ApplyHealthChange(float Delta)
 	Health += Delta;
 	UE_LOG(LogTemp, Warning, TEXT("Health is %f"), Health);
 
-	OnHealthChanged.Broadcast(nullptr, this, Health, Delta, MaxHealth, DangerousHealth);  
+	OnHealthChanged.Broadcast(nullptr, this, Health, Delta, MaxHealth, DangerousHealth);
+
 	
 	return true;
 }
