@@ -88,7 +88,7 @@ void USInteractionComponent::PrimaryInteract()
 			{
 				if(HitActor->Implements<USGamePlayInterface>())
 				{
-					APawn* MyPawn = Cast<APawn>(HitActor);
+					APawn* MyPawn = Cast<APawn>(MyOwner);
 					ISGamePlayInterface::Execute_Interact(HitActor, MyPawn);
 
 					// 在击中点位置绘制一个半径为Radius的球体

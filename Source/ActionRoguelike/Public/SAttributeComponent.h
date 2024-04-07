@@ -42,6 +42,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Attributes")
 	bool ApplyHealthChange(float Delta);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Attributes")
 	bool IsCharacterAlive() const;
+
+	UFUNCTION(BlueprintCallable, Category="Attributes")
+	bool IsFullHeath();
+
+	UFUNCTION(BlueprintCallable, Category="Attributs")
+	static USAttributeComponent* GetAttributes(AActor* FromActor);
+	
 };

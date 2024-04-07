@@ -9,7 +9,7 @@ USAttributeComponent::USAttributeComponent()
 	Health = 100.0f;
 	MaxHealth = 100.0f;
 	MinHealth = 0.0f;
-	DangerousHealth = 30.0f;
+	DangerousHealth = 20.0f;
 }
 
 // Called when the game starts
@@ -38,4 +38,19 @@ bool USAttributeComponent::ApplyHealthChange(float Delta)
 bool USAttributeComponent::IsCharacterAlive() const
 {
 	return Health > 0.0f;
+}
+
+bool USAttributeComponent::IsFullHeath()
+{
+	return Health == MaxHealth;
+}
+
+USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)
+{
+	if(FromActor)
+	{
+		return Cast<USAttributeComponent>(FromActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+	}
+
+	return nullptr;
 }

@@ -46,6 +46,8 @@ protected:
 	FTimerHandle TimerHandle_BlackHoleAttack;
 
 	FTimerHandle TimerHanle_Dash;
+
+	FTimerHandle TimerHandle_CharacterDead;
 	
 	float AttackAnimDelay;
 	
@@ -95,4 +97,7 @@ public:
 
 	UFUNCTION()
 	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta, float MaxHealth, float DangerousHealth);
+	
+	UFUNCTION()
+	void NotifyCharacterDead();
 };

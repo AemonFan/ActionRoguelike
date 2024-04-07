@@ -9,6 +9,7 @@
 #include "SInteractionComponent.h"
 #include "SAttributeComponent.h"
 #include "SMagicProjectile.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -80,16 +81,29 @@ void ASCharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCompo
 {
 	if(Delta < 0.0f)
 	{
-		// Hit Flash Material
+		// Show Hit Flash Material
 		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());		
 	}
 	
-	//const bool bAlive = AttributeComp->IsCharacterAlive();
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
+		// Disable Player Control
 		APlayerController* PC = Cast<APlayerController>(GetController());
 		DisableInput(PC);
+	
+		// Disable Collision
+		SetActorEnableCollision(false);
+		
+		GetWorldTimerManager().SetTimer(TimerHandle_CharacterDead, this, &ASCharacter::NotifyCharacterDead, 2.0f);
 	}
+}
+
+void ASCharacter::NotifyCharacterDead()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_CharacterDead);
+	
+	// Hide Character
+	RootComponent->SetVisibility(false, true);
 }
 
 void ASCharacter::MoveForward(float value)
