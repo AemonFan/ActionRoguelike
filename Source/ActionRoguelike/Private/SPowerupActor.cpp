@@ -30,6 +30,7 @@ void ASPowerupActor::BeginPlay()
 
 void ASPowerupActor::ShowPowerup()
 {
+	GetWorldTimerManager().ClearTimer(TimerHandle_RespawnTime);
 	SetPowerupState(true);
 }
 

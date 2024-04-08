@@ -21,7 +21,16 @@ public:
 	ASProjectileBase();
 
 protected:
-	
+
+	UPROPERTY(EditAnywhere, Category="Effects|Shake")
+	TSubclassOf<UCameraShakeBase> ImpactShake;
+
+	UPROPERTY(EditAnywhere, Category="Effects|Shake")
+	float ImpactShakeInnerRadius;
+
+	UPROPERTY(EditAnywhere, Category="Effects|Shake")
+	float ImpactShakeOuterRadius;
+		
 	UPROPERTY(EditAnywhere, Category="Effects")
 	UParticleSystem* ImpactVFX;
 

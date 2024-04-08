@@ -23,14 +23,26 @@ void USAttributeComponent::BeginPlay()
 
 bool USAttributeComponent::ApplyHealthChange(float Delta)
 {
-	if((Health + Delta) < 0 || (Health + Delta) > MaxHealth)
+	if(Health <= 0 && Delta < 0.0f)
 		return false;
+
+	if(Health >= MaxHealth && Delta > 0.0f)
+		return false;
+
+	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
+	/*Health += Delta;
+	if(Delta > 0.0f)
+	{
+		Health = Health > MaxHealth ? MaxHealth : Health;
+	}
+	else
+	{
+		Health = Health < 0 ? 0 : Health;
+	}*/
 	
-	Health += Delta;
 	UE_LOG(LogTemp, Warning, TEXT("Health is %f"), Health);
 
 	OnHealthChanged.Broadcast(nullptr, this, Health, Delta, MaxHealth, DangerousHealth);
-
 	
 	return true;
 }

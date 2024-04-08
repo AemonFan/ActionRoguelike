@@ -31,7 +31,9 @@ ASProjectileBase::ASProjectileBase()
 	MovementComp->InitialSpeed = 1000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
-	
+
+	ImpactShakeInnerRadius = 0.0f;
+	ImpactShakeOuterRadius = 1500.0f;
 }
 
 // Called when the game starts or when spawned
@@ -71,10 +73,22 @@ void ASProjectileBase::Explode_Implementation()
 	if(ensure(!IsPendingKill()))
 	{
 		// 例子发射器，生成指定的粒子特效，爆炸效果
-		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+		if(ImpactVFX)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());			
+		}
 
+		// CameraShake
+		if(ImpactShake)
+		{
+			UGameplayStatics::PlayWorldCameraShake(this, ImpactShake, GetActorLocation(), ImpactShakeInnerRadius, ImpactShakeOuterRadius);
+		}
+		
 		// Play 爆炸音效
-		UGameplayStatics::PlaySoundAtLocation(this,ImpactSound, GetActorLocation());
+		if(ImpactSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());			
+		}
 		
 		Destroy();
 	}
