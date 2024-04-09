@@ -5,10 +5,6 @@
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
-  
-ASAIController::ASAIController()
-{
-}
 
 void ASAIController::BeginPlay()
 {
@@ -24,8 +20,7 @@ void ASAIController::BeginPlay()
 	{
 		if(GetBlackboardComponent())
 		{
-			// GetBlackboardComponent()->SetValueAsVector("MoveToLocation", MyPawn->GetActorLocation());
-			GetBlackboardComponent()->SetValueAsObject("MoveToActor", MyPawn);
+			GetBlackboardComponent()->SetValueAsObject("TargetActor", MyPawn);
 		}
 	}
 

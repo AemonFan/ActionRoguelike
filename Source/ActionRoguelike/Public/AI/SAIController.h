@@ -16,11 +16,9 @@ class ACTIONROGUELIKE_API ASAIController : public AAIController
 
 public:
 	
-	ASAIController();
-
 	UPROPERTY(EditAnywhere, Category="AI")
 	UBehaviorTree* BeHaviorTree;
-	
+
 protected:
 	
 	virtual void BeginPlay() override;
