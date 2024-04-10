@@ -15,22 +15,6 @@ ASTargetDummy::ASTargetDummy()
 	RootComponent = StaticMesh;
 
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
-	
-	
-}
-
-// Called when the game starts or when spawned
-void ASTargetDummy::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ASTargetDummy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
 void ASTargetDummy::PostInitializeComponents()

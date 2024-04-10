@@ -14,6 +14,10 @@ class ACTIONROGUELIKE_API ASPowerup_HealthPotion : public ASPowerupActor
 {
 	GENERATED_BODY()
 
+public:
+	
+	ASPowerup_HealthPotion();
+	
 protected:
 
 	UPROPERTY(EditAnywhere, Category="Powerup")
@@ -25,7 +29,4 @@ protected:
 public:
 	void Interact_Implementation(APawn* InstigatorPawn) override;
 	
-	FText GetInteractText_Implementation(APawn* InstigatorPawn) override;
-
-	ASPowerup_HealthPotion();
 };

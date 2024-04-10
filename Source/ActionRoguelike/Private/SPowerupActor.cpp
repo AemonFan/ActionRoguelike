@@ -21,13 +21,6 @@ ASPowerupActor::ASPowerupActor()
 
 }
 
-// Called when the game starts or when spawned
-void ASPowerupActor::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
 void ASPowerupActor::ShowPowerup()
 {
 	GetWorldTimerManager().ClearTimer(TimerHandle_RespawnTime);
@@ -51,19 +44,7 @@ void ASPowerupActor::SetPowerupState(bool bNewIsActive)
 	RootComponent->SetVisibility(bIsActive, true);
 }
 
-// Called every frame
-void ASPowerupActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void ASPowerupActor::Interact_Implementation(APawn* InstigatorPawn)
 {
 	
-}
-
-FText ASPowerupActor::GetInteractText_Implementation(APawn* InstigatorPawn)
-{
-	return FText::GetEmpty();
 }

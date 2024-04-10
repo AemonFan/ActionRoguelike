@@ -48,13 +48,6 @@ void ASProjectileBase::BeginPlay()
 	}
 }
 
-// Called every frame
-void ASProjectileBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void ASProjectileBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();

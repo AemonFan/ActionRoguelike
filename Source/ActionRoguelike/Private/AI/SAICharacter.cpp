@@ -3,25 +3,94 @@
 
 #include "AI/SAICharacter.h"
 
-// Sets default values
+#include "AIController.h"
+#include "BrainComponent.h"
+#include "DrawDebugHelpers.h"
+#include "MovieSceneTimeHelpers.h"
+#include "SAttributeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Perception/PawnSensingComponent.h"
+
 ASAICharacter::ASAICharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	PawnSensingComp = CreateDefaultSubobject<UPawnSensingComponent>("PawnSensingComp");
+
+	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
+
+	CheckLowHealthInterval = 5;
 }
 
-// Called when the game starts or when spawned
 void ASAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// GetWorldTimerManager().SetTimer(TimerHandle_CheckLowHealth, this, &ASAICharacter::CheckLowHealth, CheckLowHealthInterval);
+}
+
+void ASAICharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	PawnSensingComp->OnSeePawn.AddDynamic(this, &ASAICharacter::OnSeePawn);
+
+	AttributeComp->OnHealthChanged.AddDynamic(this, &ASAICharacter::ASAICharacter::OnHealthValueChanged);
 	
 }
 
-// Called every frame
-void ASAICharacter::Tick(float DeltaTime)
+void ASAICharacter::OnSeePawn(APawn* Pawn)
 {
-	Super::Tick(DeltaTime);
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if(ensure(AIController))
+	{
+		UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
+		if(BBComp)
+		{
+			BBComp->SetValueAsObject("TargetActor", Pawn);
+		}
 
+		DrawDebugString(GetWorld(), GetActorLocation(), "PLAYR SPOTTED", nullptr, FColor::White, 4.0f, true, 1);
+	}
 }
 
+void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta, float MaxHealth, float DangerousHealth)
+{
+	if(Delta < 0.0f)
+	{
+		// Show Hit Flash Material
+		//GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());		
+	}
+
+	if(NewHealth <= 0.0f)
+	{
+		// AI Dead:
+
+		// Stop Run BehaviorTree
+		AAIController* AIController = Cast<AAIController>(GetController());
+		if(AIController)
+		{
+			// Reason : Just used to debug.
+			AIController->GetBrainComponent()->StopLogic("Killed");
+		}
+
+		// Ragdoll
+		GetMesh()->SetAllBodiesSimulatePhysics(true);
+		GetMesh()->SetCollisionProfileName("Ragdoll");
+
+		// Set lifespan
+		SetLifeSpan(10.0f);
+	}
+}
+
+void ASAICharacter::CheckLowHealth()
+{
+	if(AttributeComp->IsInLowHealth())
+	{
+		// Minion is dangerous, find a safe location to hide. And cure self.
+
+		AttributeComp->ApplyHealthChange(AttributeComp->GetMaxHealth());
+	}
+}

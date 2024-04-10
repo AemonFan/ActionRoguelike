@@ -15,10 +15,11 @@ class ACTIONROGUELIKE_API USBTService_CheckAttackRange : public UBTService
 	GENERATED_BODY()
 
 public:
+	
 	USBTService_CheckAttackRange();
 
-public:
-
+protected:
+	
 	UPROPERTY(EditAnywhere, Category="AI")
 	FBlackboardKeySelector TargetActorKey;
 	
@@ -26,18 +27,10 @@ public:
 	FBlackboardKeySelector AttackRangeKey;
 
 	UPROPERTY(EditAnywhere, Category="AI")
-	FBlackboardKeySelector MoveToRangeKey;
-
-	UPROPERTY(EditAnywhere, Category="AI")
 	FBlackboardKeySelector TargetActorIsAliveKey;
 
 	UPROPERTY(EditAnywhere, Category="AI")
-	float InnerRadius;
+	float AttackRange;
 
-	UPROPERTY(EditAnywhere, Category="AI")
-	float OuterRadius;
-
-protected:
-	
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };

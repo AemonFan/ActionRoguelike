@@ -24,20 +24,6 @@ ASExplosiveBarrel::ASExplosiveBarrel()
 	RadialForce->AddCollisionChannelToAffect(ECC_WorldDynamic); // 添加碰撞通道对象类型 为这个径向力添加一个碰撞通道以产生影响。
 }
 
-// Called when the game starts or when spawned
-void ASExplosiveBarrel::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ASExplosiveBarrel::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 // 此方法在所有组件初始化之后被自动调用
 void ASExplosiveBarrel::PostInitializeComponents()
 {

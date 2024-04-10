@@ -6,21 +6,41 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+class USAttributeComponent;
+class UPawnSensingComponent;
+
 UCLASS()
 class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	ASAICharacter();
 
 protected:
+
+	UPROPERTY(EditAnywhere, Category="Components")
+	UPawnSensingComponent* PawnSensingComp;
+
+	UPROPERTY(EditAnywhere, Category="Components")
+	USAttributeComponent* AttributeComp;
+
+	UPROPERTY(EditAnywhere, Category="Health")
+	float CheckLowHealthInterval;
+	
+	FTimerHandle TimerHandle_CheckLowHealth;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	virtual void PostInitializeComponents() override;
+	
+	UFUNCTION()
+	virtual void OnSeePawn(APawn* Pawn);
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION()
+	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta, float MaxHealth, float DangerousHealth);
 
+	UFUNCTION()
+	void CheckLowHealth();
 };

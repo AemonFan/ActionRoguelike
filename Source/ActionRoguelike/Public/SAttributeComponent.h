@@ -14,11 +14,12 @@ class ACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
+	
 	USAttributeComponent();
 
 protected:
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes")
 	float Health;
 
@@ -30,10 +31,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes")
 	float DangerousHealth;
-		
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
+	
 public:
 	
 	UPROPERTY(BlueprintAssignable)
@@ -42,13 +40,36 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Attributes")
 	bool ApplyHealthChange(float Delta);
 
-	UFUNCTION(BlueprintCallable, Category="Attributes")
-	bool IsCharacterAlive() const;
-
-	UFUNCTION(BlueprintCallable, Category="Attributes")
-	bool IsFullHeath();
-
 	UFUNCTION(BlueprintCallable, Category="Attributs")
 	static USAttributeComponent* GetAttributes(AActor* FromActor);
 	
+	UFUNCTION(BlueprintCallable, Category="Attributes")
+	bool IsAlive() const
+	{
+		return Health > 0.0f;
+	}
+
+	UFUNCTION(BlueprintCallable, Category="Attributes")
+	bool IsFullHeath() const
+	{
+		return Health == MaxHealth;
+	}
+	
+	UFUNCTION(BlueprintCallable, Category="Attributes")
+	float GetHealth() const
+	{
+		return Health;
+	}
+
+	UFUNCTION(BlueprintCallable, Category="Attributes")
+	bool IsInLowHealth() const
+	{
+		return Health <= DangerousHealth;
+	}
+
+	UFUNCTION(BlueprintCallable, Category="Attributes")
+	float GetMaxHealth() const
+	{
+		return MaxHealth;
+	}
 };

@@ -29,15 +29,3 @@ void ASPowerup_HealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 		}
 	}
 }
-
-FText ASPowerup_HealthPotion::GetInteractText_Implementation(APawn* InstigatorPawn)
-{
-	/*USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(InstigatorPawn);
-	if(AttributeComp && AttributeComp->IsFullHeath())
-	{
-		return LOCTEXT("HealthPotion_FullHealthWarning", "Already at full health");
-	}
-	return FText::Format(LOCTEXT("HealtPotion_InteractMessage", "Cost {0} Credits. Restores health to maximum."), CreditCost);*/
-
-	return FText::GetEmpty();
-}

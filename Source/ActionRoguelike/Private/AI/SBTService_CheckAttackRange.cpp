@@ -10,9 +10,7 @@
 
 USBTService_CheckAttackRange::USBTService_CheckAttackRange()
 {
-	InnerRadius = 500.0f; 
-
-	OuterRadius = 2000.0f;
+	AttackRange = 2000.0f;
 }
 
 void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -20,7 +18,6 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	// Check Target Actor is In Attack Range ?
-
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if(ensure(BlackboardComp))
 	{
@@ -36,25 +33,23 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 					float DistanceToTarget = FVector::Distance(TargetActor->GetActorLocation(), AIPawn->GetActorLocation());
 
 					// check if within attack \ move to range.
-					bool bWithinAttackRange = DistanceToTarget <= OuterRadius;
-					bool bWithinMoveToRange = (DistanceToTarget <= OuterRadius && DistanceToTarget >= InnerRadius);
+					bool bWithinAttackRange = DistanceToTarget <= AttackRange;
 
 					bool bHasLOS = false;
-					if(bWithinAttackRange || bWithinMoveToRange)
+					if(bWithinAttackRange)
 					{
 						// check if AIController's pawn can see TargetActor. true means can see.
 						bHasLOS = AIController->LineOfSightTo(TargetActor);
 					}
 					
 					BlackboardComp->SetValueAsBool(AttackRangeKey.SelectedKeyName, bWithinAttackRange && bHasLOS);
-					BlackboardComp->SetValueAsBool(MoveToRangeKey.SelectedKeyName, bWithinMoveToRange && bHasLOS);
 				}
 			}
 
 			USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(TargetActor->GetComponentByClass(USAttributeComponent::StaticClass()));
 			if(AttributeComp)
 			{
-				BlackboardComp->SetValueAsBool(TargetActorIsAliveKey.SelectedKeyName, AttributeComp->IsCharacterAlive());
+				BlackboardComp->SetValueAsBool(TargetActorIsAliveKey.SelectedKeyName, AttributeComp->IsAlive());
 			}
 		}
 	}

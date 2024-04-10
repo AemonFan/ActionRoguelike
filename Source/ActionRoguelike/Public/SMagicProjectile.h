@@ -13,7 +13,7 @@ class ACTIONROGUELIKE_API ASMagicProjectile : public ASProjectileBase
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+
 	ASMagicProjectile();
 
 protected:

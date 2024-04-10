@@ -10,19 +10,9 @@ void ASAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(ensure(BeHaviorTree))
+	if(ensureMsgf(BeHaviorTree, TEXT("BeHaviorTree is nullptr! Please Assignment BeHavior Asest!")))
 	{
 		RunBehaviorTree(BeHaviorTree);
 	}
-	
-	APawn* MyPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-	if(MyPawn)
-	{
-		if(GetBlackboardComponent())
-		{
-			GetBlackboardComponent()->SetValueAsObject("TargetActor", MyPawn);
-		}
-	}
-
 }
 

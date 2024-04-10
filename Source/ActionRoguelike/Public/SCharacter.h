@@ -18,7 +18,7 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
  	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
+
 	ASCharacter();
 
 protected:
@@ -56,9 +56,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
 	USAttributeComponent* AttributeComp;
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 	void MoveForward(float value);
 
 	void MoveRight(float value);
@@ -86,10 +83,8 @@ protected:
 
 	void Dash_TimeElapsed();
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+public:
+	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
