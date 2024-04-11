@@ -18,6 +18,14 @@ class ACTIONROGUELIKE_API USBTTask_RangedAttack : public UBTTaskNode
 
 public:
 
+	USBTTask_RangedAttack();
+
+	UPROPERTY(EditAnywhere, Category="Attack")
+	float BulletRangePitch;
+
+	UPROPERTY(EditAnywhere, Category="Attack")
+	float BulletRangeYaw;
+	
 	UPROPERTY(EditAnywhere, Category="Attack")
 	TSubclassOf<AActor> ProjectileClass;
 

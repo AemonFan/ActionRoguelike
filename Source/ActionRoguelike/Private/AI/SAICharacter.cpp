@@ -8,7 +8,9 @@
 #include "DrawDebugHelpers.h"
 #include "MovieSceneTimeHelpers.h"
 #include "SAttributeComponent.h"
+#include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Perception/PawnSensingComponent.h"
 
 ASAICharacter::ASAICharacter()
@@ -22,6 +24,8 @@ ASAICharacter::ASAICharacter()
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 
 	CheckLowHealthInterval = 5;
+
+	HitFlashParamName = "TimeToHit";
 }
 
 void ASAICharacter::BeginPlay()
@@ -53,11 +57,22 @@ void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCom
 	if(Delta < 0.0f)
 	{
 		// Show Hit Flash Material
-		//GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());		
+		GetMesh()->SetScalarParameterValueOnMaterials(HitFlashParamName, GetWorld()->GetTimeSeconds());		
 	}
 
-	// avoid AI attack ???
-	if(Delta < 0.0f && InstigatorActor != this)
+	// show health bar
+	if(!UserWidgetUI)
+	{
+		UserWidgetUI = CreateWidget<USWorldUserWidget>(GetWorld(), UserWidgetClass);
+		if(UserWidgetUI)
+		{
+			UserWidgetUI->AttachToActor = this;
+			UserWidgetUI->AddToViewport();
+		}
+	}
+
+	// avoid AI attack eachother ???
+	if(Delta < 0.0f && InstigatorActor != this && InstigatorActor->GetClass() != ASAICharacter::GetClass())
 	{
 		SetTargetActor(InstigatorActor);
 	}

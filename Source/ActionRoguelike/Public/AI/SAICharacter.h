@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+class USWorldUserWidget;
 class USAttributeComponent;
 class UPawnSensingComponent;
 
@@ -27,8 +28,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Health")
 	float CheckLowHealthInterval;
+
+	UPROPERTY(VisibleAnywhere, Category="Effets")
+	FName HitFlashParamName;
+
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UUserWidget> UserWidgetClass;
 	
 	FTimerHandle TimerHandle_CheckLowHealth;
+	
+	USWorldUserWidget* UserWidgetUI;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
