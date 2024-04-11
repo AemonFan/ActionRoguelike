@@ -93,6 +93,8 @@ void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCom
 		GetMesh()->SetAllBodiesSimulatePhysics(true);
 		GetMesh()->SetCollisionProfileName("Ragdoll");
 
+		// GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 		// Set lifespan
 		SetLifeSpan(10.0f);
 	}
