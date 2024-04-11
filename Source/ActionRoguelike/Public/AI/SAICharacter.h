@@ -39,8 +39,10 @@ protected:
 	virtual void OnSeePawn(APawn* Pawn);
 
 	UFUNCTION()
-	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta, float MaxHealth, float DangerousHealth);
+	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
 	UFUNCTION()
 	void CheckLowHealth();
+
+	void SetTargetActor(AActor* NewTargetActor);
 };

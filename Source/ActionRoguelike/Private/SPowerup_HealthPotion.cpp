@@ -23,7 +23,7 @@ void ASPowerup_HealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(InstigatorPawn);
 	if(ensure(AttributeComp) && !AttributeComp->IsFullHeath())
 	{
-		if(AttributeComp->ApplyHealthChange(HealthHeal))
+		if(AttributeComp->ApplyHealthChange(InstigatorPawn, HealthHeal))
 		{
 			HideAndCooldownPowerup();
 		}

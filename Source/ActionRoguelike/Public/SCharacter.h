@@ -91,7 +91,7 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	UFUNCTION()
-	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta, float MaxHealth, float DangerousHealth);
+	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 	
 	UFUNCTION()
 	void NotifyCharacterDead();

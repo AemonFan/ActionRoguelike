@@ -28,8 +28,8 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 	int AliveMinionCount = 0;
 	for(TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
 	{
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(It->GetComponentByClass(USAttributeComponent::StaticClass()));
-		if(AttributeComp && AttributeComp->IsAlive())
+		ASAICharacter* AICharacter = *It;
+		if(USAttributeComponent::IsActorAlive(AICharacter))
 		{
 			AliveMinionCount ++;
 		}
@@ -64,6 +64,6 @@ void ASGameModeBase::OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryIns
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
 	if(Locations.IsValidIndex(0))
 	{
-		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator(0, FMath::FRandRange(0, 360), 0));
 	}
 }

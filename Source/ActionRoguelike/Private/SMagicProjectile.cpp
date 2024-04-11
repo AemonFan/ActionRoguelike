@@ -20,12 +20,12 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 {
 	if(OtherActor && OtherActor != GetInstigator()) // 确保角色自己生成的投射物不会对自己造成伤害
 	{
-		USAttributeComponent* OtherAttributeCom = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+		USAttributeComponent* OtherAttributeCom = USAttributeComponent::GetAttributes(OtherActor);
 		if(OtherAttributeCom)
 		{
 			Explode();
 	
-			OtherAttributeCom->ApplyHealthChange(Damage);
+			OtherAttributeCom->ApplyHealthChange(GetInstigator(), Damage);
 		}
 	}
 }

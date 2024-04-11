@@ -46,7 +46,7 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				}
 			}
 
-			USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(TargetActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+			USAttributeComponent* AttributeComp = USAttributeComponent::GetAttributes(TargetActor);
 			if(AttributeComp)
 			{
 				BlackboardComp->SetValueAsBool(TargetActorIsAliveKey.SelectedKeyName, AttributeComp->IsAlive());

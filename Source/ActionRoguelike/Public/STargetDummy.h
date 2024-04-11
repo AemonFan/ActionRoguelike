@@ -30,5 +30,5 @@ public:
 	virtual void PostInitializeComponents() override;
 	
 	UFUNCTION()
-	void OnHealthValueChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta, float MaxHealth, float DangerousHealth);
+	void OnHealthValueChange(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 };

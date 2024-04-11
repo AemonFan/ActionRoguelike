@@ -7,7 +7,7 @@
 #include "SAttributeComponent.generated.h"
 
 // 声明动态多播委托
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FOnHealthChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewHealth, float, Delta, float, MaxHealth, float, DangerousHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnHealthChanged, AActor*, InstigatorActor, USAttributeComponent*, OwningComp, float, NewHealth, float, Delta);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_API USAttributeComponent : public UActorComponent
@@ -18,6 +18,12 @@ public:
 	
 	USAttributeComponent();
 
+	UFUNCTION(BlueprintCallable, Category="Attributs")
+	static USAttributeComponent* GetAttributes(AActor* FromActor);
+	
+	UFUNCTION(BlueprintCallable, Category="Attributs", meta=(DisplayName="IsAlive"))
+	static bool IsActorAlive(AActor* FromActor);
+	
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes")
@@ -38,11 +44,8 @@ public:
 	FOnHealthChanged OnHealthChanged;
 	
 	UFUNCTION(BlueprintCallable, Category="Attributes")
-	bool ApplyHealthChange(float Delta);
+	bool ApplyHealthChange(AActor* InstigatorActor, float Delta);
 
-	UFUNCTION(BlueprintCallable, Category="Attributs")
-	static USAttributeComponent* GetAttributes(AActor* FromActor);
-	
 	UFUNCTION(BlueprintCallable, Category="Attributes")
 	bool IsAlive() const
 	{

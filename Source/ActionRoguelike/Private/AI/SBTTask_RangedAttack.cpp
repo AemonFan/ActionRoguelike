@@ -30,7 +30,7 @@ EBTNodeResult::Type USBTTask_RangedAttack::ExecuteTask(UBehaviorTreeComponent& O
 
 		FActorSpawnParameters Params;
 		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		Params.Instigator = AICharacter; // Instigator : 对生成的Actor造成的伤害负责的 APawn
+		Params.Instigator =  ; // Instigator : 对生成的Actor造成的伤害负责的 APawn
 
 		AActor* Projectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, HandLocation, HandRotator, Params);
 

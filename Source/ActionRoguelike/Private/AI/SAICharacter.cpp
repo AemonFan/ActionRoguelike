@@ -43,20 +43,12 @@ void ASAICharacter::PostInitializeComponents()
 
 void ASAICharacter::OnSeePawn(APawn* Pawn)
 {
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if(ensure(AIController))
-	{
-		UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
-		if(BBComp)
-		{
-			BBComp->SetValueAsObject("TargetActor", Pawn);
-		}
-
-		DrawDebugString(GetWorld(), GetActorLocation(), "PLAYR SPOTTED", nullptr, FColor::White, 4.0f, true, 1);
-	}
+	SetTargetActor(Cast<AActor>(Pawn));
+	
+	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYR SPOTTED", nullptr, FColor::White, 4.0f, true, 1);
 }
 
-void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta, float MaxHealth, float DangerousHealth)
+void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
 {
 	if(Delta < 0.0f)
 	{
@@ -64,9 +56,15 @@ void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCom
 		//GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());		
 	}
 
+	// avoid AI attack ???
+	if(Delta < 0.0f && InstigatorActor != this)
+	{
+		SetTargetActor(InstigatorActor);
+	}
+	
+	// AI Dead:
 	if(NewHealth <= 0.0f)
 	{
-		// AI Dead:
 
 		// Stop Run BehaviorTree
 		AAIController* AIController = Cast<AAIController>(GetController());
@@ -91,6 +89,24 @@ void ASAICharacter::CheckLowHealth()
 	{
 		// Minion is dangerous, find a safe location to hide. And cure self.
 
-		AttributeComp->ApplyHealthChange(AttributeComp->GetMaxHealth());
+		AttributeComp->ApplyHealthChange(nullptr, AttributeComp->GetMaxHealth());
+	}
+}
+
+void ASAICharacter::SetTargetActor(AActor* NewTargetActor)
+{
+	if(NewTargetActor == nullptr)
+	{
+		return;
+	}
+	
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if(ensure(AIController))
+	{
+		UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
+		if(BBComp)
+		{
+			BBComp->SetValueAsObject("TargetActor", NewTargetActor);
+		}
 	}
 }
