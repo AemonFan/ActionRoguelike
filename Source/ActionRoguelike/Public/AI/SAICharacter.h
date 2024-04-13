@@ -18,6 +18,9 @@ class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
 public:
 	ASAICharacter();
 
+	UFUNCTION()
+	void HealAISelf(float HealValue = 0.0f);
+
 protected:
 
 	UPROPERTY(EditAnywhere, Category="Components")
@@ -49,9 +52,6 @@ protected:
 
 	UFUNCTION()
 	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
-
-	UFUNCTION()
-	void CheckLowHealth();
 
 	void SetTargetActor(AActor* NewTargetActor);
 };

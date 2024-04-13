@@ -39,10 +39,18 @@ public:
 	
 	virtual void StartPlay() override;
 
+	UFUNCTION(Exec, BlueprintCallable)
+	void KillAllAI();
+
+	void OnActorKilled(AActor* RespawnActor, AActor* Killer);
+
 protected:
 
 	UFUNCTION()
-	void SpawnBotTimerElapsed();
+	void OnRespawnActorElapsed(AController* RespawnController);
+	
+	UFUNCTION()
+	void OnSpawnBotTimerElapsed();
 
 	UFUNCTION()
 	void OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus) ;

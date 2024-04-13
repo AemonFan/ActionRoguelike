@@ -5,8 +5,11 @@
 
 #include "EngineUtils.h"
 #include "SAttributeComponent.h"
+#include "SCharacter.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+
+static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
 ASGameModeBase::ASGameModeBase()
 {
@@ -20,11 +23,54 @@ void ASGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 
-	GetWorldTimerManager().SetTimer(TimerHandle_SpawnMinion, this, &ASGameModeBase::SpawnBotTimerElapsed, SpawnTimerInterval, true);
+	GetWorldTimerManager().SetTimer(TimerHandle_SpawnMinion, this, &ASGameModeBase::OnSpawnBotTimerElapsed, SpawnTimerInterval, true);
 }
 
-void ASGameModeBase::SpawnBotTimerElapsed()
+void ASGameModeBase::KillAllAI()
 {
+	for(TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
+	{
+		ASAICharacter* AICharacter = *It;
+		USAttributeComponent* Comp = USAttributeComponent::GetAttributes(AICharacter);
+		if(Comp && Comp->IsAlive())
+		{
+			Comp->KillSelf(this); // @fixme: maybe pass in player? for kill credit
+		}
+	}
+}
+
+void ASGameModeBase::OnActorKilled(AActor* RespawnActor, AActor* Killer)
+{
+	ASCharacter* RespawnCharacter = Cast<ASCharacter>(RespawnActor);
+	if(RespawnCharacter)
+	{
+		FTimerDelegate RespawnDelegate;
+		RespawnDelegate.BindUFunction(this, "OnRespawnActorElapsed", RespawnCharacter->GetController());
+	
+		FTimerHandle TimerHandle_RespawnDelay;
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, RespawnDelegate, 2.0f, false);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("OnActorKiller: %s be killed by %s"), *GetNameSafe(RespawnActor), *GetNameSafe(Killer));
+}
+
+void ASGameModeBase::OnRespawnActorElapsed(AController* RespawnController)
+{
+	if(ensure(RespawnController))
+	{
+		RespawnController->UnPossess();
+		RestartPlayer(RespawnController);
+	}
+}
+
+void ASGameModeBase::OnSpawnBotTimerElapsed()
+{
+	if(!CVarSpawnBots.GetValueOnGameThread())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CVarSpawnBots false"));
+		return;	
+	}
+	
 	int AliveMinionCount = 0;
 	for(TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
 	{

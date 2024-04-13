@@ -6,13 +6,11 @@
 #include "DrawDebugHelpers.h"
 #include "SGamePlayInterface.h"
 
-// Sets default values for this component's properties
+static TAutoConsoleVariable<bool> CVarShowDrawDebug(TEXT("su.ShowDrawDebug"), false, TEXT("Interaction ShowDrawDebug Switch"), ECVF_Cheat);
+
 USInteractionComponent::USInteractionComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
 }
 
 void USInteractionComponent::PrimaryInteract()
@@ -28,6 +26,7 @@ void USInteractionComponent::PrimaryInteract()
 	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic); // 设置碰撞查询
 	
 	bool bUseLogic1 = false;
+	bool bDrawDebug = CVarShowDrawDebug.GetValueOnGameThread();
 	
 	if (bUseLogic1)
 	{
@@ -46,7 +45,11 @@ void USInteractionComponent::PrimaryInteract()
 		}
 		
 		const FColor HitColor = bIsHitObject ? FColor::Green : FColor::Red;
-		DrawDebugLine(GetWorld(), EyeLocation, End, HitColor, false, 2.0f, 0, 1.0f);
+
+		if(bDrawDebug)
+		{
+			DrawDebugLine(GetWorld(), EyeLocation, End, HitColor, false, 2.0f, 0, 1.0f);
+		}
 	}
 	else
 	{
@@ -71,13 +74,18 @@ void USInteractionComponent::PrimaryInteract()
 					APawn* MyPawn = Cast<APawn>(MyOwner);
 					ISGamePlayInterface::Execute_Interact(HitActor, MyPawn);
 
-					// 在击中点位置绘制一个半径为Radius的球体
-					// DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, HitColor, false, 2.0f);
+					if(bDrawDebug)
+					{
+						DrawDebugSphere(GetWorld(), Hit.ImpactPoint, Radius, 32, HitColor, false, 2.0f);
+					}
 					break;
 				}
 			}
 		}
 
-		DrawDebugLine(GetWorld(), EyeLocation, End, HitColor, false, 2.0f, 0, 1.0f);
+		if(bDrawDebug)
+		{
+			DrawDebugLine(GetWorld(), EyeLocation, End, HitColor, false, 2.0f, 0, 1.0f);
+		}
 	}
 }

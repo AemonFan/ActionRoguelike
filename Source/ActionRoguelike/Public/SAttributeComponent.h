@@ -75,4 +75,10 @@ public:
 	{
 		return MaxHealth;
 	}
+
+	UFUNCTION(BlueprintCallable, Category="Attributes")
+	bool KillSelf(AActor* InstigatorActor);
+
+	UFUNCTION(BlueprintCallable, Category="Attributes")
+	bool HealSelf(AActor* InstigatorActor, float HealValue = 0.0f);
 };

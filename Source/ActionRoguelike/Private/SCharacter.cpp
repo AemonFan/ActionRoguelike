@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SInteractionComponent.h"
 #include "SAttributeComponent.h"
+#include "SGameModeBase.h"
 #include "SMagicProjectile.h"
 #include "Components/CapsuleComponent.h"
 
@@ -71,23 +72,42 @@ void ASCharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCompo
 	
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
-		// Disable Player Control
+		// Disable Player Input
 		APlayerController* PC = Cast<APlayerController>(GetController());
-		DisableInput(PC);
+		if(PC)
+		{
+			DisableInput(PC);
+		}
 	
 		// Disable Collision
 		SetActorEnableCollision(false);
 		
-		GetWorldTimerManager().SetTimer(TimerHandle_CharacterDead, this, &ASCharacter::NotifyCharacterDead, 2.0f);
+		FTimerDelegate ActorDeadDelegate;
+		ActorDeadDelegate.BindUFunction(this, "OnActorDead", InstigatorActor);
+		GetWorldTimerManager().SetTimer(TimerHandle_CharacterDead, ActorDeadDelegate, 2.0f, false);
 	}
 }
 
-void ASCharacter::NotifyCharacterDead()
+void ASCharacter::OnActorDead(AActor* Killer)
 {
 	GetWorldTimerManager().ClearTimer(TimerHandle_CharacterDead);
+
+	// 角色死亡后应该清理定时器句柄Handle
+	GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
 	
 	// Hide Character
-	RootComponent->SetVisibility(false, true);
+	GetRootComponent()->SetVisibility(false, true);
+	
+	ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+	if(GameMode)
+	{
+		GameMode->OnActorKilled(this, Killer);
+	}
+}
+
+void ASCharacter::HealSelf(float Amount /* = 100 */)
+{
+	AttributeComp->HealSelf(this, Amount);
 }
 
 void ASCharacter::MoveForward(float value)
@@ -184,8 +204,6 @@ void ASCharacter::PrimaryAttack()
 
 	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimerElapsed, AttackAnimDelay);
 
-	// 角色死亡后应该清理定时器句柄Handle
-	// GetWorldTimerManager().ClearTimer(AttackTimerHandle);
 }
 
 void ASCharacter::PrimaryAttack_TimerElapsed()

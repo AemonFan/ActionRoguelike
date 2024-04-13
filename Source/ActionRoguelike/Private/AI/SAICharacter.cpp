@@ -11,6 +11,8 @@
 #include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/PawnSensingComponent.h"
 
 ASAICharacter::ASAICharacter()
@@ -23,6 +25,10 @@ ASAICharacter::ASAICharacter()
 
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetGenerateOverlapEvents(true);
+	
 	CheckLowHealthInterval = 5;
 
 	HitFlashParamName = "TimeToHit";
@@ -31,8 +37,6 @@ ASAICharacter::ASAICharacter()
 void ASAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// GetWorldTimerManager().SetTimer(TimerHandle_CheckLowHealth, this, &ASAICharacter::CheckLowHealth, CheckLowHealthInterval);
 }
 
 void ASAICharacter::PostInitializeComponents()
@@ -72,7 +76,7 @@ void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCom
 	}
 
 	// avoid AI attack eachother ???
-	if(Delta < 0.0f && InstigatorActor != this && InstigatorActor->GetClass() != ASAICharacter::GetClass())
+	if(Delta < 0.0f && InstigatorActor && InstigatorActor != this && InstigatorActor->GetClass() != ASAICharacter::GetClass())
 	{
 		SetTargetActor(InstigatorActor);
 	}
@@ -93,20 +97,23 @@ void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCom
 		GetMesh()->SetAllBodiesSimulatePhysics(true);
 		GetMesh()->SetCollisionProfileName("Ragdoll");
 
-		// GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetCharacterMovement()->DisableMovement();
 
 		// Set lifespan
 		SetLifeSpan(10.0f);
 	}
 }
 
-void ASAICharacter::CheckLowHealth()
+void ASAICharacter::HealAISelf(float HealValue /*= 0.0f*/)
 {
 	if(AttributeComp->IsInLowHealth())
 	{
-		// Minion is dangerous, find a safe location to hide. And cure self.
-
-		AttributeComp->ApplyHealthChange(nullptr, AttributeComp->GetMaxHealth());
+		if(HealValue == 0.0f)
+		{
+			HealValue = AttributeComp->GetMaxHealth();
+		}
+		AttributeComp->ApplyHealthChange(nullptr, HealValue);
 	}
 }
 

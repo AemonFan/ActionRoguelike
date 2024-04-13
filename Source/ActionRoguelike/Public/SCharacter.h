@@ -94,5 +94,8 @@ public:
 	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 	
 	UFUNCTION()
-	void NotifyCharacterDead();
+	void OnActorDead(AActor* Killer);
+
+	UFUNCTION(Exec)
+	void HealSelf(float Amount = 100.0f);
 };
