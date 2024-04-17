@@ -54,4 +54,6 @@ protected:
 	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
 	void SetTargetActor(AActor* NewTargetActor);
+
+	void ActorDead(AActor* Killer);
 };

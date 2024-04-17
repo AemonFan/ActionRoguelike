@@ -7,6 +7,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "SGameModeBase.generated.h"
 
+class ASPowerup_Coin;
 class UEnvQueryInstanceBlueprintWrapper;
 class UEnvQuery;
 /**
@@ -36,7 +37,22 @@ public:
 	UCurveFloat* DifficultyCurve;
 	
 	FTimerHandle TimerHandle_SpawnMinion;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="AI")
+	int CreditsPerKill;
+
+	UPROPERTY(EditAnywhere, Category="Powerups")
+	TArray<TSubclassOf<AActor>> SpawnPowerupClass;
+
+	UPROPERTY(EditAnywhere, Category="Powerups")
+	UEnvQuery* SpawnQueryCoin;
+
+	UPROPERTY(EditDefaultsOnly, Category="Powerups")
+	float RequiredPowerupDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category="Powerups")
+	int DesiredPowerupCount;
+
 	virtual void StartPlay() override;
 
 	UFUNCTION(Exec, BlueprintCallable)
@@ -44,6 +60,8 @@ public:
 
 	void OnActorKilled(AActor* RespawnActor, AActor* Killer);
 
+	void OnAIActorKilled(AActor* InstigatorActor);
+	
 protected:
 
 	UFUNCTION()
@@ -53,5 +71,8 @@ protected:
 	void OnSpawnBotTimerElapsed();
 
 	UFUNCTION()
-	void OnQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus) ;
+	void OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	UFUNCTION()
+	void OnSpawnPowerupQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 };

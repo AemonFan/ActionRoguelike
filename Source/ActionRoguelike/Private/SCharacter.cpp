@@ -3,6 +3,7 @@
 #include "SCharacter.h"
 
 #include "PhysXInterfaceWrapperCore.h"
+#include "SActionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -27,6 +28,8 @@ ASCharacter::ASCharacter()
 	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
 
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
+
+	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
 	
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
@@ -51,6 +54,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::JumpStart);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ASCharacter::JumpEnd);
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::StartSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::StopSprint);
 
 	PlayerInputComponent->BindAction("OpenTreasure", IE_Pressed, this, &ASCharacter::OpenTreasureChest);
 }
@@ -143,6 +149,16 @@ void ASCharacter::JumpEnd()
 	bPressedJump = false;
 }
 
+void ASCharacter::StartSprint()
+{
+	ActionComp->StartAction(this, "Sprint");
+}
+
+void ASCharacter::StopSprint()
+{
+	ActionComp->StopAction(this, "Sprint");
+}
+
 void ASCharacter::OpenTreasureChest()
 {
 	if (InteractionComp)
@@ -161,7 +177,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 		// 指定投射物生成方式
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnParams.Instigator = this; // Instigator : 对生成的Actor造成的伤害负责的 APawn
+		SpawnParams.Instigator = this; // InstigatorActor : 对生成的Actor造成的伤害负责的 APawn
 
 		// 碰撞追踪形状
 		FCollisionShape Shape;

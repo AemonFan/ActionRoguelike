@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
+class USActionComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class USInteractionComponent;
@@ -40,6 +41,15 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category="Attack") 
 	UAnimMontage* AttackAnim;
+
+	UPROPERTY(VisibleAnywhere, Category="Components")
+	USInteractionComponent* InteractionComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	USAttributeComponent* AttributeComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	USActionComponent* ActionComp;
 	
 	FTimerHandle TimerHandle_PrimaryAttack;
 	
@@ -51,11 +61,6 @@ protected:
 	
 	float AttackAnimDelay;
 	
-	USInteractionComponent* InteractionComp;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Components")
-	USAttributeComponent* AttributeComp;
-
 	void MoveForward(float value);
 
 	void MoveRight(float value);
@@ -63,6 +68,10 @@ protected:
 	void JumpStart();
 
 	void JumpEnd();
+
+	void StartSprint();
+
+	void StopSprint();
 
 	void OpenTreasureChest();
 

@@ -21,7 +21,7 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere, Category="Powerup")
-	float CreditCost;
+	int CreditCost;
 
 	UPROPERTY(EditAnywhere, Category="Powerup")
 	float HealthHeal;

@@ -8,6 +8,7 @@
 #include "DrawDebugHelpers.h"
 #include "MovieSceneTimeHelpers.h"
 #include "SAttributeComponent.h"
+#include "SGameModeBase.h"
 #include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"
@@ -84,24 +85,7 @@ void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCom
 	// AI Dead:
 	if(NewHealth <= 0.0f)
 	{
-
-		// Stop Run BehaviorTree
-		AAIController* AIController = Cast<AAIController>(GetController());
-		if(AIController)
-		{
-			// Reason : Just used to debug.
-			AIController->GetBrainComponent()->StopLogic("Killed");
-		}
-
-		// Ragdoll
-		GetMesh()->SetAllBodiesSimulatePhysics(true);
-		GetMesh()->SetCollisionProfileName("Ragdoll");
-
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		GetCharacterMovement()->DisableMovement();
-
-		// Set lifespan
-		SetLifeSpan(10.0f);
+		ActorDead(InstigatorActor);
 	}
 }
 
@@ -132,5 +116,32 @@ void ASAICharacter::SetTargetActor(AActor* NewTargetActor)
 		{
 			BBComp->SetValueAsObject("TargetActor", NewTargetActor);
 		}
+	}
+}
+
+void ASAICharacter::ActorDead(AActor* Killer)
+{
+	// Stop Run BehaviorTree
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if(AIController)
+	{
+		// Reason : Just used to debug.
+		AIController->GetBrainComponent()->StopLogic("Killed");
+	}
+
+	// Ragdoll
+	GetMesh()->SetAllBodiesSimulatePhysics(true);
+	GetMesh()->SetCollisionProfileName("Ragdoll");
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->DisableMovement();
+
+	// Set lifespan
+	SetLifeSpan(10.0f);
+
+	ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+	if(GameMode)
+	{
+		GameMode->OnAIActorKilled(Killer);
 	}
 }
