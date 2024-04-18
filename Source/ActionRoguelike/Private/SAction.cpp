@@ -3,14 +3,57 @@
 
 #include "SAction.h"
 
+#include "SActionComponent.h"
+
 void USAction::StartAction_Implementation(AActor* InstigatorActor)
 {
+	if(!IsCanStartAction(InstigatorActor))
+	{
+		return;
+	}
+	
 	UE_LOG(LogTemp, Warning, TEXT("%s Runnning Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
+
+	USActionComponent* ActionComp = GetOwningComponent();
+	ActionComp->ActiveGameplayTags.AppendTags(GrantsTags);
+
+	bIsRunning = true;
 }
 
 void USAction::StopAction_Implementation(AActor* InstigatorActor)
 {
+	if(!bIsRunning)
+	{
+		return;
+	}
+	
 	UE_LOG(LogTemp, Warning, TEXT("%s Stop Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
+
+	USActionComponent* ActionComp = GetOwningComponent();
+	ActionComp->ActiveGameplayTags.RemoveTags(GrantsTags);
+	
+	bIsRunning = false;
+}
+
+bool USAction::IsCanStartAction(AActor* InstigatorActor)
+{
+	if(bIsRunning)
+	{
+		return false;
+	}
+	
+	USActionComponent* ActionComp = GetOwningComponent();
+	if(ActionComp->ActiveGameplayTags.HasAnyExact(BlockedTags))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+USActionComponent* USAction::GetOwningComponent() const
+{
+	return Cast<USActionComponent>(GetOuter());
 }
 
 UWorld* USAction::GetWorld() const

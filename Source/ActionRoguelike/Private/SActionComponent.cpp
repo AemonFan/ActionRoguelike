@@ -24,6 +24,9 @@ void USActionComponent::BeginPlay()
 void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	FString DebugMessage = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
+	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMessage);
 }
 
 void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
@@ -41,7 +44,16 @@ bool USActionComponent::StartAction(AActor* InstigatorActor, FName ActionName)
 	{
 		if(Action->ActionName == ActionName)
 		{
+			if(!Action->IsCanStartAction(InstigatorActor))
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, GetNameSafe(GetOwner()) + " StartAction Failed!");
+				return false;
+			}
+			
 			Action->StartAction(InstigatorActor);
+			
+			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, GetNameSafe(GetOwner()) + " StartAction :" + ActionName.ToString());
+			
 			return true;
 		}
 	}
@@ -55,6 +67,9 @@ bool USActionComponent::StopAction(AActor* InstigatorActor, FName ActionName)
 		if(Action->ActionName == ActionName)
 		{
 			Action->StopAction(InstigatorActor);
+			
+			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, GetNameSafe(GetOwner()) + " StopAction :" + ActionName.ToString());
+			
 			return true;
 		}
 	}
