@@ -15,10 +15,11 @@ void USAction::StopAction_Implementation(AActor* InstigatorActor)
 
 UWorld* USAction::GetWorld() const
 {
+	// 获取当前对象绑定的组件，通过组件GetWorld
 	UActorComponent* Comp = Cast<UActorComponent>(GetOuter());
 	if(Comp)
 	{
 		return Comp->GetWorld();
 	}
-	return UObject::GetWorld();
+	return nullptr;
 }

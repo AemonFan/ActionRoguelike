@@ -4,11 +4,13 @@
 #include "SAction_ProjectileAttack.h"
 
 #include "SCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 USAction_ProjectileAttack::USAction_ProjectileAttack()
 {
 	AttackAnimDelay = 0.2f;
-	
+
+	HandSocketName = "Muzzle_01";
 }
 
 void USAction_ProjectileAttack::StartAction_Implementation(AActor* InstigatorActor)
@@ -32,6 +34,9 @@ void USAction_ProjectileAttack::StartAction_Implementation(AActor* InstigatorAct
 	}
 	
 	PlayerCharacter->PlayAnimMontage(AttackAnim);
+
+	// SnapToTarget : 锁定目标
+	UGameplayStatics::SpawnEmitterAttached(CastingEffect, PlayerCharacter->GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
 	
 	FTimerDelegate InDelegate;
 	InDelegate.BindUFunction(this, "OnAttackDelay_TimerElapsed", PlayerCharacter);
@@ -47,7 +52,7 @@ void USAction_ProjectileAttack::OnAttackDelay_TimerElapsed(ACharacter* Instigato
 		return;
 	}
 
-	const FVector HandLocation = InstigatorCharacter->GetMesh()->GetSocketLocation("Muzzle_01");
+	const FVector HandLocation = InstigatorCharacter->GetMesh()->GetSocketLocation(HandSocketName);
 
 	// 指定投射物生成方式
 	FActorSpawnParameters SpawnParams;

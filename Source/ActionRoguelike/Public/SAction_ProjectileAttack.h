@@ -18,7 +18,7 @@ class ACTIONROGUELIKE_API USAction_ProjectileAttack : public USAction
 public:
 	USAction_ProjectileAttack();
 
-	void StartAction_Implementation(AActor* InstigatorActor) override;
+	virtual void StartAction_Implementation(AActor* InstigatorActor) override;
 	
 protected:
 	
@@ -27,9 +27,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Attack") 
 	UAnimMontage* AttackAnim;
-
+	
+	UPROPERTY(EditDefaultsOnly, Category="Attack")
 	float AttackAnimDelay;
 
+	UPROPERTY(VisibleAnywhere, Category="Effect")
+	FName HandSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category="Effect")
+	UParticleSystem* CastingEffect;
+	
 	FTimerHandle TimerHandle_AttackDelay;
 
 	UFUNCTION()
