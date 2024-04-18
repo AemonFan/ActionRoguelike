@@ -29,19 +29,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
-
-	UPROPERTY(EditAnywhere, Category="Attack")
-	TSubclassOf<AActor> ProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category="Attack")
-	TSubclassOf<AActor> BlackHoleProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category="Attack")
-	TSubclassOf<AActor> DashProjectileClass;
 	
-	UPROPERTY(EditAnywhere, Category="Attack") 
-	UAnimMontage* AttackAnim;
-
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	USInteractionComponent* InteractionComp;
 
@@ -50,17 +38,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USActionComponent* ActionComp;
-	
-	FTimerHandle TimerHandle_PrimaryAttack;
-	
-	FTimerHandle TimerHandle_BlackHoleAttack;
-
-	FTimerHandle TimerHanle_Dash;
 
 	FTimerHandle TimerHandle_CharacterDead;
-	
-	float AttackAnimDelay;
-	
+
+	UPROPERTY(VisibleAnywhere, Category="Projectile")
+	FName SwitchProjectileClass;
+		
 	void MoveForward(float value);
 
 	void MoveRight(float value);
@@ -75,22 +58,22 @@ protected:
 
 	void OpenTreasureChest();
 
-	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
+	void ProjectileAttack();
 	
-	// MagicProjectile
-	void PrimaryAttack();
+	void SwitchAttack_MagicProjectile()
+	{
+		SwitchProjectileClass = "PrimaryAttack";
+	}
 
-	void PrimaryAttack_TimerElapsed();
+	void SwitchAttack_BlackHoleProjectile()
+	{
+		SwitchProjectileClass = "BlackHole";
+	}
 
-	// BlackHoleProjectile
-	void BlackHoleAttack();
-
-	void BlackHole_TimeElapsed();
-
-	// DashProjectile
-	void Dash();
-
-	void Dash_TimeElapsed();
+	void SwitchAttack_DashProjectile()
+	{
+		SwitchProjectileClass = "Dash";
+	}
 
 public:
 	
@@ -107,4 +90,6 @@ public:
 
 	UFUNCTION(Exec)
 	void HealSelf(float Amount = 100.0f);
+
+	virtual FVector GetPawnViewLocation() const override;
 };

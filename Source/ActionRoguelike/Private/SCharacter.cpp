@@ -35,8 +35,8 @@ ASCharacter::ASCharacter()
 	bUseControllerRotationPitch = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	AttackAnimDelay = 0.2f;
+	
+	SwitchProjectileClass = "PrimaryAttack";
 }
 
 // Called to bind functionality to input
@@ -50,13 +50,16 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("TurnAround", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
-	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
+	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::ProjectileAttack);
+	PlayerInputComponent->BindAction("MagicProticleAttack", IE_Pressed, this, &ASCharacter::SwitchAttack_MagicProjectile);
+	PlayerInputComponent->BindAction("BlackHoleProticleAttack", IE_Pressed, this, &ASCharacter::SwitchAttack_BlackHoleProjectile);
+	PlayerInputComponent->BindAction("DashProticleAttack", IE_Pressed, this, &ASCharacter::SwitchAttack_DashProjectile);
 	
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::JumpStart);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ASCharacter::JumpEnd);
 
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::StartSprint);
-	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ASCharacter::StopSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ASCharacter::StopSprint);
 
 	PlayerInputComponent->BindAction("OpenTreasure", IE_Pressed, this, &ASCharacter::OpenTreasureChest);
 }
@@ -98,9 +101,6 @@ void ASCharacter::OnActorDead(AActor* Killer)
 {
 	GetWorldTimerManager().ClearTimer(TimerHandle_CharacterDead);
 
-	// 角色死亡后应该清理定时器句柄Handle
-	GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack);
-	
 	// Hide Character
 	GetRootComponent()->SetVisibility(false, true);
 	
@@ -114,6 +114,11 @@ void ASCharacter::OnActorDead(AActor* Killer)
 void ASCharacter::HealSelf(float Amount /* = 100 */)
 {
 	AttributeComp->HealSelf(this, Amount);
+}
+
+FVector ASCharacter::GetPawnViewLocation() const
+{
+	return CameraComp->GetComponentLocation();
 }
 
 void ASCharacter::MoveForward(float value)
@@ -167,86 +172,7 @@ void ASCharacter::OpenTreasureChest()
 	}
 }
 
-void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
+void ASCharacter::ProjectileAttack()
 {
-	// ensure ： 确保 ProjectileClass 存在，否则出发断言，仅在第一次执行时出发
-	if(ensure(ClassToSpawn))
-	{
-		const FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
-
-		// 指定投射物生成方式
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		SpawnParams.Instigator = this; // InstigatorActor : 对生成的Actor造成的伤害负责的 APawn
-
-		// 碰撞追踪形状
-		FCollisionShape Shape;
-		Shape.SetSphere(20.0f);
-
-		// 碰撞查询忽略当前Character本身
-		FCollisionQueryParams Params;
-		Params.AddIgnoredActor(this);
-		
-		// 添加碰撞查询类型
-		FCollisionObjectQueryParams ObjParams;
-		ObjParams.AddObjectTypesToQuery(ECC_WorldDynamic);
-		ObjParams.AddObjectTypesToQuery(ECC_WorldStatic);
-		ObjParams.AddObjectTypesToQuery(ECC_Pawn);
-		
-		// 追踪起点为摄像机的位置，终点为当前摄像机位置的5000米
-		FVector TraceStart = CameraComp->GetComponentLocation();
-		FVector TraceEnd = CameraComp->GetComponentLocation() + (GetControlRotation().Vector() * 5000);
-
-		// 追踪扫描，遇到第一个碰撞对象即返回
-		FHitResult Hit;
-		if (GetWorld()->SweepSingleByObjectType(Hit, TraceStart, TraceEnd, FQuat::Identity, ObjParams, Shape, Params))
-		{
-			// 有检测到碰撞对象，保存碰撞对象位置
-			TraceEnd = Hit.ImpactPoint;
-		}
-
-		// 根据目标位置和方向生成 transform
-		FRotator ProjRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
-		FTransform SpawnTM = FTransform(ProjRotation, HandLocation);
-		
-		// 在目前位置生成投射物
-		GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
-	}
-}
-
-void ASCharacter::PrimaryAttack()
-{
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimerElapsed, AttackAnimDelay);
-
-}
-
-void ASCharacter::PrimaryAttack_TimerElapsed()
-{
-	SpawnProjectile(ProjectileClass);
-}
-
-void ASCharacter::BlackHoleAttack()
-{
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleAttack, this, &ASCharacter::BlackHole_TimeElapsed, AttackAnimDelay);
-}
-
-void ASCharacter::BlackHole_TimeElapsed()
-{
-	SpawnProjectile(BlackHoleProjectileClass);
-}
-
-void ASCharacter::Dash()
-{
-	PlayAnimMontage(AttackAnim);
-
-	GetWorldTimerManager().SetTimer(TimerHanle_Dash, this, &ASCharacter::Dash_TimeElapsed, AttackAnimDelay);
-}
-
-void ASCharacter::Dash_TimeElapsed()
-{
-	SpawnProjectile(DashProjectileClass);
+	ActionComp->StartAction(this, SwitchProjectileClass);
 }

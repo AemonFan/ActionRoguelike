@@ -7,6 +7,8 @@
 #include "SActionComponent.generated.h"
 
 
+class USAction;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class ACTIONROGUELIKE_API USActionComponent : public UActorComponent
 {
@@ -17,6 +19,9 @@ public:
 	USActionComponent();
 
 protected:
+
+	UPROPERTY(EditAnywhere, Category="Action")
+	TArray<TSubclassOf<USAction>> DefaultActions;
 
 	UPROPERTY()
 	TArray<USAction*> Actions;

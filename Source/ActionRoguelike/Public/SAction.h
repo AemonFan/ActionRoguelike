@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class ACTIONROGUELIKE_API USAction : public UObject
 {
 	GENERATED_BODY()
@@ -24,5 +24,6 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, Category="Action")
 	void StopAction(AActor* InstigatorActor);
-	
+
+	UWorld* GetWorld() const override;
 };
