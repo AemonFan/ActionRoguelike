@@ -2,10 +2,12 @@
 
 #include "SMagicProjectile.h"
 
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SGameplayFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 #include "components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 
 ASMagicProjectile::ASMagicProjectile()
 {
@@ -23,14 +25,16 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 	
 	if(OtherActor && OtherActor != GetInstigator()) // 确保角色自己生成的投射物不会对自己造成伤害
 	{
+		USActionComponent* ActionComp = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass()));
 		
-		// USAttributeComponent* OtherAttributeCom = USAttributeComponent::GetAttributes(OtherActor);
-		// if(OtherAttributeCom)
-		// {
-		// 	Explode();
-		//
-		// 	OtherAttributeCom->ApplyHealthChange(GetInstigator(), Damage);
-		// }
+		if(ActionComp && ActionComp->ActiveGameplayTags.HasTag(ParryTag))
+		{
+			MovementComp->Velocity = MovementComp->Velocity * (-1);
+			
+			SetInstigator(Cast<APawn>(OtherActor));
+
+			return;
+		}
 		
 		if(USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, Damage, SweepResult))
 		{

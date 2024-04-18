@@ -31,7 +31,7 @@ protected:
 
 public:
 
-	UPROPERTY(EditAnywhere, Category="Tags")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Tags")
 	FGameplayTagContainer ActiveGameplayTags;
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

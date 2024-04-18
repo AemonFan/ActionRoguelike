@@ -46,8 +46,7 @@ bool USActionComponent::StartAction(AActor* InstigatorActor, FName ActionName)
 		{
 			if(!Action->IsCanStartAction(InstigatorActor))
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, GetNameSafe(GetOwner()) + " StartAction Failed!");
-				return false;
+				continue;
 			}
 			
 			Action->StartAction(InstigatorActor);

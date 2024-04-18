@@ -31,10 +31,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Action")
 	FName ActionName;
 
-	UFUNCTION(BlueprintNativeEvent, Category="Action")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Action")
 	void StartAction(AActor* InstigatorActor);
 	
-	UFUNCTION(BlueprintNativeEvent, Category="Action")
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Action")
 	void StopAction(AActor* InstigatorActor);
 
 	UFUNCTION(BlueprintCallable, Category="Action")
