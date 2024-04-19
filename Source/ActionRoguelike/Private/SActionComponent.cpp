@@ -35,7 +35,19 @@ void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
 	if(ensure(NewAction))
 	{
 		Actions.Add(NewAction);
+
+		if(NewAction->bIsAutoStart)
+		{
+			NewAction->StartAction(GetOwner());
+		}
 	}
+}
+
+void USActionComponent::RemoveAction(USAction* Action)
+{
+	ensure(!Action->IsRunning());
+
+	Actions.Remove(Action);
 }
 
 bool USActionComponent::StartAction(AActor* InstigatorActor, FName ActionName)

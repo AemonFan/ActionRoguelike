@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "SAICharacter.generated.h"
 
+class USActionComponent;
 class USWorldUserWidget;
 class USAttributeComponent;
 class UPawnSensingComponent;
@@ -29,6 +30,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Components")
 	USAttributeComponent* AttributeComp;
 
+	UPROPERTY(EditAnywhere, Category="Action")
+	USActionComponent* ActionComp;
+	
 	UPROPERTY(EditAnywhere, Category="Health")
 	float CheckLowHealthInterval;
 

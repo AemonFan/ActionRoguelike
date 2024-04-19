@@ -5,6 +5,13 @@
 
 #include "SActionComponent.h"
 
+USAction::USAction()
+{
+	bIsRunning = false;
+	
+	bIsAutoStart = false;
+}
+
 void USAction::StartAction_Implementation(AActor* InstigatorActor)
 {
 	if(!IsCanStartAction(InstigatorActor))

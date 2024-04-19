@@ -16,6 +16,10 @@ class ACTIONROGUELIKE_API USAction : public UObject
 {
 	GENERATED_BODY()
 
+public:
+
+	USAction();
+
 protected:
 
 	bool bIsRunning;
@@ -27,6 +31,9 @@ protected:
 	FGameplayTagContainer BlockedTags;
 	
 public:
+
+	UPROPERTY(EditDefaultsOnly, Category="Action")
+	bool bIsAutoStart;
 
 	UPROPERTY(EditDefaultsOnly, Category="Action")
 	FName ActionName;

@@ -7,6 +7,7 @@
 #include "BrainComponent.h"
 #include "DrawDebugHelpers.h"
 #include "MovieSceneTimeHelpers.h"
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SGameModeBase.h"
 #include "SWorldUserWidget.h"
@@ -26,6 +27,8 @@ ASAICharacter::ASAICharacter()
 
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 
+	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
+	
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetGenerateOverlapEvents(true);
