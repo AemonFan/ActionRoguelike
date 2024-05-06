@@ -2,6 +2,8 @@
 
 #include "SCharacter.h"
 
+#include <string>
+
 #include "PhysXInterfaceWrapperCore.h"
 #include "SActionComponent.h"
 #include "Camera/CameraComponent.h"
@@ -11,6 +13,7 @@
 #include "SAttributeComponent.h"
 #include "SGameModeBase.h"
 #include "SMagicProjectile.h"
+#include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"
 
 // Sets default values
@@ -37,6 +40,7 @@ ASCharacter::ASCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	
 	SwitchProjectileClass = "PrimaryAttack";
+	NeedRageForBlackHole = 1.0f;
 }
 
 // Called to bind functionality to input
@@ -67,8 +71,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void ASCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-  
+	
 	AttributeComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthValueChanged);
+	AttributeComp->OnRageChanged.AddDynamic(this, &ASCharacter::OnRageChanged);
 }
 
 void ASCharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
@@ -76,7 +81,10 @@ void ASCharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCompo
 	if(Delta < 0.0f)
 	{
 		// Show Hit Flash Material
-		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());		
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());
+
+		// Add Rage
+		AttributeComp->RageGained(InstigatorActor, AttributeComp->GetRageRate() * Delta * (-1));
 	}
 	
 	if (NewHealth <= 0.0f && Delta < 0.0f)
@@ -116,9 +124,34 @@ void ASCharacter::HealSelf(float Amount /* = 100 */)
 	AttributeComp->HealSelf(this, Amount);
 }
 
+void ASCharacter::OnRageChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewRage, float Delta)
+{
+	
+}
+
 FVector ASCharacter::GetPawnViewLocation() const
 {
 	return CameraComp->GetComponentLocation();
+}
+
+void ASCharacter::ShowCommonTipsWidget(FText ShowText)
+{
+	if(ensure(CommonTipsWidgetClass))
+	{
+		UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), CommonTipsWidgetClass);
+		
+		if(Widget)
+		{
+			Widget->AddToViewport();
+
+			CommonTips = ShowText;
+		}
+	}
+}
+
+FText ASCharacter::GetCommonTipsText()
+{
+	return CommonTips;
 }
 
 void ASCharacter::MoveForward(float value)
@@ -175,4 +208,18 @@ void ASCharacter::OpenTreasureChest()
 void ASCharacter::ProjectileAttack()
 {
 	ActionComp->StartAction(this, SwitchProjectileClass);
+}
+
+void ASCharacter::SwitchAttack_BlackHoleProjectile()
+{
+	if(AttributeComp->GetRage() > NeedRageForBlackHole)
+	{
+		AttributeComp->RageRequired(this, NeedRageForBlackHole);
+		SwitchProjectileClass = "BlackHole";
+	}
+	else
+	{
+		FString text = FString::Printf(TEXT("Can not Use BlackHoleProjectile Unitl Your Rage More Than %f."), NeedRageForBlackHole); //FString::Printf(TEXT("I am %d years old"), 18)
+		ShowCommonTipsWidget(FText::FromString(text)); 
+	}
 }

@@ -43,7 +43,15 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category="Projectile")
 	FName SwitchProjectileClass;
-		
+
+	FText CommonTips;
+
+	UPROPERTY(EditDefaultsOnly, Category="Projectile")
+	float NeedRageForBlackHole;
+	
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UUserWidget > CommonTipsWidgetClass;
+
 	void MoveForward(float value);
 
 	void MoveRight(float value);
@@ -65,11 +73,8 @@ protected:
 		SwitchProjectileClass = "PrimaryAttack";
 	}
 
-	void SwitchAttack_BlackHoleProjectile()
-	{
-		SwitchProjectileClass = "BlackHole";
-	}
-
+	void SwitchAttack_BlackHoleProjectile();
+	
 	void SwitchAttack_DashProjectile()
 	{
 		SwitchProjectileClass = "Dash";
@@ -91,5 +96,14 @@ public:
 	UFUNCTION(Exec)
 	void HealSelf(float Amount = 100.0f);
 
+	UFUNCTION()
+	void OnRageChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewRage, float Delta);
+
 	virtual FVector GetPawnViewLocation() const override;
+
+	UFUNCTION(BlueprintCallable, Category="UI")
+	void ShowCommonTipsWidget(FText ShowText);
+
+	UFUNCTION(BlueprintCallable, Category="UI")
+	FText GetCommonTipsText();
 };

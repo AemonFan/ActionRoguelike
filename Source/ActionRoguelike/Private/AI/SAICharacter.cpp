@@ -57,7 +57,18 @@ void ASAICharacter::OnSeePawn(APawn* Pawn)
 {
 	SetTargetActor(Cast<AActor>(Pawn));
 	
-	DrawDebugString(GetWorld(), GetActorLocation(), "PLAYR SPOTTED", nullptr, FColor::White, 4.0f, true, 1);
+	if(PlayerSpottedWidgetClass)
+	{
+		USWorldUserWidget* Widget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
+		
+		if(Widget)
+		{
+			Widget->AttachToActor = this;
+			Widget->AddToViewport();
+		}
+	}
+
+	//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYR SPOTTED", nullptr, FColor::White, 4.0f, true, 1);
 }
 
 void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)

@@ -11,6 +11,10 @@ USAttributeComponent::USAttributeComponent()
 	MaxHealth = 100.0f;
 	MinHealth = 0.0f;
 	DangerousHealth = 20.0f;
+
+	Rage = 0.0f;
+	RageMax = 10.0f;
+	RageRate = 0.1f;
 }
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
@@ -53,6 +57,38 @@ bool USAttributeComponent::HealSelf(AActor* InstigatorActor, float HealValue /*=
 		HealValue = GetMaxHealth();
 	}
 	return ApplyHealthChange(InstigatorActor, HealValue);
+}
+
+bool USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
+{
+	if(Rage <= 0 && Delta < 0.0f)
+		return false;
+
+	if(Rage >= RageMax && Delta > 0.0f)
+		return false;
+	
+	Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
+
+	UE_LOG(LogTemp, Warning, TEXT("Rage is %f"), Rage);
+
+	OnRageChanged.Broadcast(InstigatorActor, this, Rage, Delta);
+	
+	return true;
+}
+
+void USAttributeComponent::RageGained(AActor* InstigatorActor, float Delta)
+{
+	ApplyRageChange(InstigatorActor, Delta);
+}
+
+bool USAttributeComponent::RageRequired(AActor* InstigatorActor, float Delta)
+{
+	if(Delta > Rage)
+	{
+		return false;
+	}
+	
+	return ApplyRageChange(InstigatorActor, Delta * (-1));
 }
 
 USAttributeComponent* USAttributeComponent::GetAttributes(AActor* FromActor)

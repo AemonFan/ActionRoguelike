@@ -42,8 +42,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="UI")
 	TSubclassOf<UUserWidget> UserWidgetClass;
 	
-	FTimerHandle TimerHandle_CheckLowHealth;
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UUserWidget> PlayerSpottedWidgetClass;
 	
+	FTimerHandle TimerHandle_CheckLowHealth;
+
+	UPROPERTY()
 	USWorldUserWidget* UserWidgetUI;
 
 	// Called when the game starts or when spawned
