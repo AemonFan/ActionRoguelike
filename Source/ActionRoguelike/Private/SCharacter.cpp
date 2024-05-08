@@ -189,7 +189,7 @@ void ASCharacter::JumpEnd()
 
 void ASCharacter::StartSprint()
 {
-	ActionComp->StartAction(this, "Sprint");
+	ActionComp->StartActionByName(this, "Sprint");
 }
 
 void ASCharacter::StopSprint()
@@ -207,7 +207,7 @@ void ASCharacter::OpenTreasureChest()
 
 void ASCharacter::ProjectileAttack()
 {
-	ActionComp->StartAction(this, SwitchProjectileClass);
+	ActionComp->StartActionByName(this, SwitchProjectileClass);
 }
 
 void ASCharacter::SwitchAttack_BlackHoleProjectile()

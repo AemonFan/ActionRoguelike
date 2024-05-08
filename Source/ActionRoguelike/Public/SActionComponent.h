@@ -43,7 +43,10 @@ public:
 	void RemoveAction(USAction* NewAction);
 	
 	UFUNCTION(BlueprintCallable, Category="Action")
-	bool StartAction(AActor* InstigatorActor, FName ActionName);
+	bool StartActionByName(AActor* InstigatorActor, FName ActionName);
+
+	UFUNCTION(Server, Reliable)
+	void ServerStartAction(AActor* InstigatorActor, FName ActionName);
 	
 	UFUNCTION(BlueprintCallable, Category="Action")
 	bool StopAction(AActor* InstigatorActor, FName ActionName);

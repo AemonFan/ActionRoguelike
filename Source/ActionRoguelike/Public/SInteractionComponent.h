@@ -37,11 +37,17 @@ protected:
 	UPROPERTY()
 	USWorldUserWidget* DefaultWidgetInstance;
 	
-	void FindBestInteractable();
 	
 public:
 	
 	void PrimaryInteract();
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+protected:
+	
+	void FindBestInteractable();
+
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(AActor* InFocus);
 };

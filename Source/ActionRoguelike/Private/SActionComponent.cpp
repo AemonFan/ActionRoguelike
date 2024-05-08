@@ -9,6 +9,7 @@ USActionComponent::USActionComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	SetIsReplicatedByDefault(true);
 }
 
 void USActionComponent::BeginPlay()
@@ -50,25 +51,36 @@ void USActionComponent::RemoveAction(USAction* Action)
 	Actions.Remove(Action);
 }
 
-bool USActionComponent::StartAction(AActor* InstigatorActor, FName ActionName)
+bool USActionComponent::StartActionByName(AActor* InstigatorActor, FName ActionName)
 {
 	for (auto Action : Actions)
 	{
-		if(Action->ActionName == ActionName)
+		if(Action && Action->ActionName == ActionName)
 		{
 			if(!Action->IsCanStartAction(InstigatorActor))
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, GetNameSafe(GetOwner()) + " StartAction :" + ActionName.ToString());
+				
 				continue;
+			}
+
+			if(!GetOwner()->HasAuthority())
+			{
+				// Notify Client 
+				ServerStartAction(InstigatorActor, ActionName);
 			}
 			
 			Action->StartAction(InstigatorActor);
-			
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, GetNameSafe(GetOwner()) + " StartAction :" + ActionName.ToString());
 			
 			return true;
 		}
 	}
 	return false;
+}
+
+void USActionComponent::ServerStartAction_Implementation(AActor* InstigatorActor, FName ActionName)
+{
+	StartActionByName(InstigatorActor, ActionName);
 }
 
 bool USActionComponent::StopAction(AActor* InstigatorActor, FName ActionName)

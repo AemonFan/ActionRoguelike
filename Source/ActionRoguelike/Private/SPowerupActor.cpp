@@ -19,6 +19,7 @@ ASPowerupActor::ASPowerupActor()
 	bIsActive = true;
 	RespawnTime = 10.0f;
 
+	SetReplicates(true);
 }
 
 void ASPowerupActor::ShowPowerup()

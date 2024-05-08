@@ -24,8 +24,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
 	
-protected:
 	UPROPERTY(EditAnywhere)
 	float TargetPitchValue;
+
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpen", BlueprintReadOnly)
+	bool bLidOpen;
 	
+protected:
+
+	UFUNCTION()
+	void OnRep_LidOpen(); // RepNotify
 };
