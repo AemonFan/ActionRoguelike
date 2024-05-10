@@ -35,6 +35,8 @@ void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
 	USAction* NewAction = NewObject<USAction>(this, ActionClass);
 	if(ensure(NewAction))
 	{
+		NewAction->Initialize(this);
+		
 		Actions.Add(NewAction);
 
 		if(NewAction->bIsAutoStart)

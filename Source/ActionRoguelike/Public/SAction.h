@@ -11,18 +11,27 @@ class USActionComponent;
 /**
  * 
  */
-UCLASS(Blueprintable)
-class ACTIONROGUELIKE_API USAction : public UObject
+
+USTRUCT()
+struct FRepData
 {
 	GENERATED_BODY()
 
 public:
 
-	USAction();
+	UPROPERTY()
+	bool bIsRunning;
+
+	UPROPERTY()
+	AActor* Instigator;
+};
+
+UCLASS(Blueprintable)
+class ACTIONROGUELIKE_API USAction : public UObject
+{
+	GENERATED_BODY()
 
 protected:
-
-	bool bIsRunning;
 
 	UPROPERTY(EditDefaultsOnly, Category="Tags")
 	FGameplayTagContainer GrantsTags;
@@ -32,11 +41,18 @@ protected:
 	
 public:
 
+	UPROPERTY(ReplicatedUsing="OnRep_DataChanged")
+	FRepData RepData;
+
 	UPROPERTY(EditDefaultsOnly, Category="Action")
 	bool bIsAutoStart;
 
 	UPROPERTY(EditDefaultsOnly, Category="Action")
 	FName ActionName;
+
+	USActionComponent* ActionComp;
+
+	void Initialize(USActionComponent* InActionComp);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Action")
 	void StartAction(AActor* InstigatorActor);
@@ -50,11 +66,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Action")
 	bool IsRunning() const
 	{
-		return bIsRunning;
+		return RepData.bIsRunning;
 	}
 
 	UFUNCTION(BlueprintCallable, Category="Action")
 	USActionComponent* GetOwningComponent() const;
 
-	UWorld* GetWorld() const override;
+	virtual UWorld* GetWorld() const override;
+
+protected:
+	
+	virtual bool IsSupportedForNetworking() const override
+	{
+		return true;
+	}
+
+	UFUNCTION()
+	void OnRep_DataChanged();
 };

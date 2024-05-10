@@ -4,12 +4,11 @@
 #include "SAction.h"
 
 #include "SActionComponent.h"
+#include "Net/UnrealNetwork.h"
 
-USAction::USAction()
+void USAction::Initialize(USActionComponent* InActionComp)
 {
-	bIsRunning = false;
-	
-	bIsAutoStart = false;
+	ActionComp = InActionComp;
 }
 
 void USAction::StartAction_Implementation(AActor* InstigatorActor)
@@ -20,37 +19,42 @@ void USAction::StartAction_Implementation(AActor* InstigatorActor)
 	}
 	
 	UE_LOG(LogTemp, Warning, TEXT("%s Runnning Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
+	
+	if(ensure(ActionComp))
+	{
+		ActionComp->ActiveGameplayTags.AppendTags(GrantsTags);
+	}
 
-	USActionComponent* ActionComp = GetOwningComponent();
-	ActionComp->ActiveGameplayTags.AppendTags(GrantsTags);
-
-	bIsRunning = true;
+	RepData.bIsRunning = true;
+	RepData.Instigator = InstigatorActor;
 }
 
 void USAction::StopAction_Implementation(AActor* InstigatorActor)
 {
-	if(!bIsRunning)
+	if(!IsRunning())
 	{
 		return;
 	}
 	
 	UE_LOG(LogTemp, Warning, TEXT("%s Stop Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
 
-	USActionComponent* ActionComp = GetOwningComponent();
-	ActionComp->ActiveGameplayTags.RemoveTags(GrantsTags);
+	if(ensure(ActionComp))
+	{
+		ActionComp->ActiveGameplayTags.RemoveTags(GrantsTags);
+	}
 	
-	bIsRunning = false;
+	RepData.bIsRunning = false;
+	RepData.Instigator = nullptr;
 }
 
 bool USAction::IsCanStartAction(AActor* InstigatorActor)
 {
-	if(bIsRunning)
+	if(IsRunning())
 	{
 		return false;
 	}
 	
-	USActionComponent* ActionComp = GetOwningComponent();
-	if(ActionComp->ActiveGameplayTags.HasAnyExact(BlockedTags))
+	if(ensure(ActionComp) && ActionComp->ActiveGameplayTags.HasAnyExact(BlockedTags))
 	{
 		return false;
 	}
@@ -60,7 +64,7 @@ bool USAction::IsCanStartAction(AActor* InstigatorActor)
 
 USActionComponent* USAction::GetOwningComponent() const
 {
-	return Cast<USActionComponent>(GetOuter());
+	return ActionComp;
 }
 
 UWorld* USAction::GetWorld() const
@@ -72,4 +76,23 @@ UWorld* USAction::GetWorld() const
 		return Comp->GetWorld();
 	}
 	return nullptr;
+}
+
+void USAction::OnRep_DataChanged()
+{
+	if(IsRunning())
+	{
+		StartAction(RepData.Instigator);
+	}
+	else
+	{
+		StopAction(RepData.Instigator);
+	}
+}
+
+void USAction::GetLifetimeReplicatedProps(class TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USAction, RepData);
 }
