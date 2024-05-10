@@ -95,4 +95,5 @@ void USAction::GetLifetimeReplicatedProps(class TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(USAction, RepData);
+	DOREPLIFETIME(USAction, ActionComp);
 }

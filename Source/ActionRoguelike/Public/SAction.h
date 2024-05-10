@@ -50,6 +50,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Action")
 	FName ActionName;
 
+	UPROPERTY(Replicated)
 	USActionComponent* ActionComp;
 
 	void Initialize(USActionComponent* InActionComp);

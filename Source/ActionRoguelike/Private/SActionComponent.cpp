@@ -4,6 +4,8 @@
 #include "SActionComponent.h"
 
 #include "SAction.h"
+#include "Engine/ActorChannel.h"
+#include "Net/UnrealNetwork.h"
 
 USActionComponent::USActionComponent()
 {
@@ -16,9 +18,12 @@ void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (auto ActionClass : DefaultActions)
+	if(GetOwner()->HasAuthority())
 	{
-		AddAction(ActionClass);
+		for (TSubclassOf<USAction> ActionClass : DefaultActions)
+		{
+			AddAction(GetOwner(), ActionClass);
+		}		
 	}
 }
 
@@ -30,18 +35,23 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMessage);
 }
 
-void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
+void USActionComponent::AddAction(AActor* InstigatorActor, TSubclassOf<USAction> ActionClass)
 {
-	USAction* NewAction = NewObject<USAction>(this, ActionClass);
+	if(!ensure(ActionClass))
+	{
+		return;
+	}
+	
+	USAction* NewAction = NewObject<USAction>(GetOwner(), ActionClass);
 	if(ensure(NewAction))
 	{
 		NewAction->Initialize(this);
 		
 		Actions.Add(NewAction);
 
-		if(NewAction->bIsAutoStart)
+		if(NewAction->bIsAutoStart && ensure(NewAction->IsCanStartAction(InstigatorActor)))
 		{
-			NewAction->StartAction(GetOwner());
+			NewAction->StartAction(InstigatorActor);
 		}
 	}
 }
@@ -100,3 +110,25 @@ bool USActionComponent::StopAction(AActor* InstigatorActor, FName ActionName)
 	}
 	return false;
 }
+
+bool USActionComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool WroteSomething = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+	for (USAction* Action : Actions)
+	{
+		if (Action)
+		{
+			WroteSomething |= Channel->ReplicateSubobject(Action, *Bunch, *RepFlags);
+		}
+	}
+
+	return WroteSomething;
+}
+
+void USActionComponent::GetLifetimeReplicatedProps(class TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USActionComponent, Actions);
+}
+

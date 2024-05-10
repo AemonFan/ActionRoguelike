@@ -42,7 +42,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 
 			if(ActionComp)
 			{
-				ActionComp->AddAction(ActionClass);
+				ActionComp->AddAction(GetInstigator(), ActionClass);
 			}
 		}
 	}

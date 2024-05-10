@@ -24,7 +24,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Action")
 	TArray<TSubclassOf<USAction>> DefaultActions;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<USAction*> Actions;
 	
 	virtual void BeginPlay() override;
@@ -37,7 +37,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category="Action")
-	void AddAction(TSubclassOf<USAction> ActionClass);
+	void AddAction(AActor* InstigatorActor,TSubclassOf<USAction> ActionClass);
 
 	UFUNCTION(BlueprintCallable, Category="Action")
 	void RemoveAction(USAction* NewAction);
@@ -50,4 +50,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="Action")
 	bool StopAction(AActor* InstigatorActor, FName ActionName);
+
+protected:
+
+	bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
+	
 };
