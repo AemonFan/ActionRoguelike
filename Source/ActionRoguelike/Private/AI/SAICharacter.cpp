@@ -36,6 +36,7 @@ ASAICharacter::ASAICharacter()
 	CheckLowHealthInterval = 5;
 
 	HitFlashParamName = "TimeToHit";
+	TargetActorKey = "TargetActor";
 }
 
 void ASAICharacter::BeginPlay()
@@ -55,6 +56,11 @@ void ASAICharacter::PostInitializeComponents()
 
 void ASAICharacter::OnSeePawn(APawn* Pawn)
 {
+	if(GetTargetActor() == Pawn)
+	{
+		return;
+	}
+	
 	SetTargetActor(Cast<AActor>(Pawn));
 	
 	if(PlayerSpottedWidgetClass)
@@ -64,7 +70,7 @@ void ASAICharacter::OnSeePawn(APawn* Pawn)
 		if(Widget)
 		{
 			Widget->AttachToActor = this;
-			Widget->AddToViewport();
+			Widget->AddToViewport(10);
 		}
 	}
 
@@ -117,7 +123,7 @@ void ASAICharacter::HealAISelf(float HealValue /*= 0.0f*/)
 
 void ASAICharacter::SetTargetActor(AActor* NewTargetActor)
 {
-	if(NewTargetActor == nullptr)
+	if(GetTargetActor() == NewTargetActor)
 	{
 		return;
 	}
@@ -131,6 +137,16 @@ void ASAICharacter::SetTargetActor(AActor* NewTargetActor)
 			BBComp->SetValueAsObject("TargetActor", NewTargetActor);
 		}
 	}
+}
+
+AActor* ASAICharacter::GetTargetActor() const
+{
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if(AIC)
+	{
+		return Cast<AActor>(AIC->GetBlackboardComponent()->GetValueAsObject(TargetActorKey));
+	}
+	return nullptr;
 }
 
 void ASAICharacter::ActorDead(AActor* Killer)

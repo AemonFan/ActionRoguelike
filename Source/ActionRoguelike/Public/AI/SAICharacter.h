@@ -50,6 +50,8 @@ protected:
 	UPROPERTY()
 	USWorldUserWidget* UserWidgetUI;
 
+	FName TargetActorKey;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
@@ -62,6 +64,8 @@ protected:
 	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
 	void SetTargetActor(AActor* NewTargetActor);
+
+	AActor* GetTargetActor() const;
 
 	void ActorDead(AActor* Killer);
 };
