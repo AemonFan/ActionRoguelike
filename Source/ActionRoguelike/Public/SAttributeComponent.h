@@ -30,9 +30,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category="Attributes")
 	float Health;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attributes")
-	float MinHealth;
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated, Category="Attributes")
 	float MaxHealth;
 
@@ -50,7 +47,7 @@ protected:
 	
 public:
 	
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category="Attributes")
 	FOnHealthChanged OnHealthChanged;
 
 	UFUNCTION(NetMulticast, Reliable) // @FIXME: mark as unreliable once we moved the 'state' out of scharacter
@@ -95,7 +92,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Attributes")
 	bool HealSelf(AActor* InstigatorActor, float HealValue = 0.0f);
 
-	UPROPERTY(BlueprintAssignable)
+	UPROPERTY(BlueprintAssignable, Category="Attributes")
 	FOnRageChanged OnRageChanged;
 	
 	UFUNCTION(BlueprintCallable, Category="Attributes")

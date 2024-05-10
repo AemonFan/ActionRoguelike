@@ -10,7 +10,6 @@ static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplie
 USAttributeComponent::USAttributeComponent()
 {
 	MaxHealth = 100.0f;
-	MinHealth = 0.0f;
 	Health = MaxHealth;
 	DangerousHealth = 20.0f;
 
@@ -28,7 +27,7 @@ void USAttributeComponent::MulticastHealthChanged_Implementation(AActor* Instiga
 
 bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delta)
 {
-	if(!GetOwner()->CanBeDamaged())
+	if(!GetOwner()->CanBeDamaged() && Delta < 0.0f)
 		return false;
 	
 	if(Health <= 0 && Delta < 0.0f)
@@ -44,14 +43,18 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 		Delta *= damageMultply;
 		UE_LOG(LogTemp, Warning, TEXT("damageMultply: %f, Delta:%f"), damageMultply, Delta);
 	}
-	
+
+	float oldHealth = Health;
 	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
 
 	UE_LOG(LogTemp, Warning, TEXT("Health is %f"), Health);
 
-	MulticastHealthChanged(InstigatorActor, Health, Delta);
+	if(oldHealth != Health)
+	{
+		MulticastHealthChanged(InstigatorActor, Health, Delta);
+	}
 	
-	return true;
+	return oldHealth != Health;
 }
 
 bool USAttributeComponent::KillSelf(AActor* InstigatorActor)
@@ -75,14 +78,18 @@ bool USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
 
 	if(Rage >= RageMax && Delta > 0.0f)
 		return false;
-	
+
+	float oldRage = Rage;
 	Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
 
 	UE_LOG(LogTemp, Warning, TEXT("Rage is %f"), Rage);
 
-	OnRageChanged.Broadcast(InstigatorActor, this, Rage, Delta);
+	if(oldRage != Rage)
+	{
+		OnRageChanged.Broadcast(InstigatorActor, this, Rage, Delta);
+	}
 	
-	return true;
+	return oldRage != Rage;
 }
 
 void USAttributeComponent::RageGained(AActor* InstigatorActor, float Delta)
