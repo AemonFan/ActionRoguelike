@@ -51,8 +51,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Action")
 	bool StopAction(AActor* InstigatorActor, FName ActionName);
 
+	UFUNCTION(Server, Reliable)
+	void ServerStopAction(AActor* InstigatorActor, FName ActionName);
+	
 protected:
 
-	bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
+	virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 	
 };

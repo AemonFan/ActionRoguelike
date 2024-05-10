@@ -20,6 +20,7 @@ void USActionComponent::BeginPlay()
 
 	if(GetOwner()->HasAuthority())
 	{
+		// Run On Server
 		for (TSubclassOf<USAction> ActionClass : DefaultActions)
 		{
 			AddAction(GetOwner(), ActionClass);
@@ -31,8 +32,9 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FString DebugMessage = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
-	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMessage);
+	
+	// FString DebugMessage = GetNameSafe(GetOwner()) + " : " + ActiveGameplayTags.ToStringSimple();
+	// GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::White, DebugMessage);
 }
 
 void USActionComponent::AddAction(AActor* InstigatorActor, TSubclassOf<USAction> ActionClass)
@@ -41,7 +43,15 @@ void USActionComponent::AddAction(AActor* InstigatorActor, TSubclassOf<USAction>
 	{
 		return;
 	}
-	
+
+	if(!GetOwner()->HasAuthority())
+	{
+		// Run On Client
+		UE_LOG(LogTemp, Warning, TEXT("Client attempting to AddAction. [Class: %s]"), *GetNameSafe(ActionClass));
+		return;
+	}
+
+	// Run On Server
 	USAction* NewAction = NewObject<USAction>(GetOwner(), ActionClass);
 	if(ensure(NewAction))
 	{
@@ -78,7 +88,7 @@ bool USActionComponent::StartActionByName(AActor* InstigatorActor, FName ActionN
 
 			if(!GetOwner()->HasAuthority())
 			{
-				// Notify Client 
+				// Run On Client
 				ServerStartAction(InstigatorActor, ActionName);
 			}
 			
@@ -97,18 +107,32 @@ void USActionComponent::ServerStartAction_Implementation(AActor* InstigatorActor
 
 bool USActionComponent::StopAction(AActor* InstigatorActor, FName ActionName)
 {
-	for (auto Action : Actions)
+	for (USAction* Action : Actions)
 	{
-		if(Action->ActionName == ActionName)
+		if(Action && Action->ActionName == ActionName)
 		{
-			Action->StopAction(InstigatorActor);
+			if(Action->IsRunning())
+			{
+				if(!GetOwner()->HasAuthority())
+				{
+					// Run On Client
+					ServerStopAction(InstigatorActor, ActionName);
+				}
+				
+				Action->StopAction(InstigatorActor);
 			
-			GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, GetNameSafe(GetOwner()) + " StopAction :" + ActionName.ToString());
+				//GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, GetNameSafe(GetOwner()) + " StopAction :" + ActionName.ToString());
 			
-			return true;
+				return true;
+			}
 		}
 	}
 	return false;
+}
+
+void USActionComponent::ServerStopAction_Implementation(AActor* InstigatorActor, FName ActionName)
+{
+	StopAction(InstigatorActor, ActionName);
 }
 
 bool USActionComponent::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)

@@ -20,6 +20,9 @@ void USAction::StartAction_Implementation(AActor* InstigatorActor)
 	
 	UE_LOG(LogTemp, Warning, TEXT("%s Runnning Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
 	
+	FString DebugMessage = GetNameSafe(InstigatorActor) + " StartAction : " + *GetNameSafe(this);
+	GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, DebugMessage);
+	
 	if(ensure(ActionComp))
 	{
 		ActionComp->ActiveGameplayTags.AppendTags(GrantsTags);
@@ -31,13 +34,11 @@ void USAction::StartAction_Implementation(AActor* InstigatorActor)
 
 void USAction::StopAction_Implementation(AActor* InstigatorActor)
 {
-	if(!IsRunning())
-	{
-		return;
-	}
-	
 	UE_LOG(LogTemp, Warning, TEXT("%s Stop Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
 
+	FString DebugMessage = GetNameSafe(InstigatorActor) + " StopAction : " + *GetNameSafe(this);
+	GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Red, DebugMessage);
+	
 	if(ensure(ActionComp))
 	{
 		ActionComp->ActiveGameplayTags.RemoveTags(GrantsTags);
@@ -70,11 +71,12 @@ USActionComponent* USAction::GetOwningComponent() const
 UWorld* USAction::GetWorld() const
 {
 	// 获取当前对象绑定的组件，通过组件GetWorld
-	UActorComponent* Comp = Cast<UActorComponent>(GetOuter());
-	if(Comp)
+	//UActorComponent* Comp = Cast<UActorComponent>(GetOuter());
+	if(ActionComp)
 	{
-		return Comp->GetWorld();
+		return ActionComp->GetWorld();
 	}
+	
 	return nullptr;
 }
 

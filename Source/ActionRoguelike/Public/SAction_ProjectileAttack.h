@@ -37,8 +37,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Effect")
 	UParticleSystem* CastingEffect;
 	
-	FTimerHandle TimerHandle_AttackDelay;
-
 	UFUNCTION()
 	void OnAttackDelay_TimerElapsed(ACharacter* InstigatorCharacter);
 };

@@ -37,16 +37,18 @@ void USAction_ProjectileAttack::StartAction_Implementation(AActor* InstigatorAct
 
 	// SnapToTarget : 锁定目标
 	UGameplayStatics::SpawnEmitterAttached(CastingEffect, PlayerCharacter->GetMesh(), HandSocketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget);
-	
-	FTimerDelegate InDelegate;
-	InDelegate.BindUFunction(this, "OnAttackDelay_TimerElapsed", PlayerCharacter);
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle_AttackDelay, InDelegate, AttackAnimDelay, false);
+
+	if(PlayerCharacter->HasAuthority())
+	{
+		FTimerDelegate InDelegate;
+		FTimerHandle TimerHandle_AttackDelay;
+		InDelegate.BindUFunction(this, "OnAttackDelay_TimerElapsed", PlayerCharacter);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle_AttackDelay, InDelegate, AttackAnimDelay, false);
+	}
 }
 
 void USAction_ProjectileAttack::OnAttackDelay_TimerElapsed(ACharacter* InstigatorCharacter)
 {
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle_AttackDelay);
-	
 	if(!ensure(InstigatorCharacter))
 	{
 		return;

@@ -3,6 +3,7 @@
 
 #include "SAttributeComponent.h"
 
+#include "SGameModeBase.h"
 #include "Net/UnrealNetwork.h"
 
 static TAutoConsoleVariable<float> CVarDamageMultiplier(TEXT("su.DamageMultiplier"), 1.0f, TEXT("Global Damage Modifier for Attribute Component."), ECVF_Cheat);
@@ -45,13 +46,27 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	}
 
 	float oldHealth = Health;
-	Health = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
+	float NewHealth = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
 
-	UE_LOG(LogTemp, Warning, TEXT("Health is %f"), Health);
-
-	if(oldHealth != Health)
+	if(GetOwner()->HasAuthority())
 	{
-		MulticastHealthChanged(InstigatorActor, Health, Delta);
+		Health = NewHealth;
+
+		UE_LOG(LogTemp, Warning, TEXT("Health is %f"), Health);
+
+		if(oldHealth != Health)
+		{
+			MulticastHealthChanged(InstigatorActor, Health, Delta);
+		}
+
+		if(Health == 0.0f)
+		{
+			ASGameModeBase* GM = GetWorld()->GetAuthGameMode<ASGameModeBase>();
+			if (GM)
+			{
+				GM->OnActorKilled(GetOwner(), InstigatorActor);
+			}
+		}
 	}
 	
 	return oldHealth != Health;
