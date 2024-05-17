@@ -6,12 +6,17 @@
 #include <Actor.h>
 
 #include "EngineUtils.h"
+#include "ModuleDescriptor.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
+#include "SGamePlayInterface.h"
 #include "SPlayerState.h"
+#include "SSaveGame.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQuery.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
+#include "GameFramework/GameStateBase.h"
+#include "Kismet/GameplayStatics.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
@@ -26,6 +31,15 @@ ASGameModeBase::ASGameModeBase()
 	RequiredPowerupDistance = 300.0f;
 
 	DesiredPowerupCount = 50;
+
+	SlotName = "SaveGame01";
+}
+
+void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	LoadSaveGame();
 }
 
 void ASGameModeBase::StartPlay()
@@ -43,6 +57,94 @@ void ASGameModeBase::StartPlay()
 		{
 			EnvQueryInst->GetOnQueryFinishedEvent().AddDynamic(this, &ASGameModeBase::OnSpawnPowerupQueryFinished);
 		}
+	}
+}
+
+void ASGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+
+	ASPlayerState* PS = NewPlayer->GetPlayerState<ASPlayerState>();
+	if(PS)
+	{
+		PS->LoadPlayerState(CurrentSaveGame);
+	}
+}
+
+void ASGameModeBase::WriteSaveGame()
+{
+	for (int32 i = 0; i < GameState->PlayerArray.Num(); i++)
+	{
+		ASPlayerState* PS = Cast<ASPlayerState>(GameState->PlayerArray[i]);
+		if(PS)
+		{
+			PS->SavePlayerState(CurrentSaveGame);
+
+			break; // single player only at this point.
+		}
+	}
+
+	CurrentSaveGame->SavedActors.Empty();
+	
+	// iterate all actors in the world
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+
+		// 判断Actor是否实现了USGamePlayInterface接口
+		if(!Actor->Implements<USGamePlayInterface>())
+		{
+			continue;
+		}
+
+		FActorSaveData ActorData;
+		ActorData.Transform = Actor->GetTransform();
+		ActorData.ActorName = Actor->GetName();
+		CurrentSaveGame->SavedActors.Add(ActorData);
+	}
+	
+	UGameplayStatics::SaveGameToSlot(CurrentSaveGame, SlotName, 0);
+}
+
+void ASGameModeBase::LoadSaveGame()
+{
+	if(UGameplayStatics::DoesSaveGameExist(SlotName, 0))
+	{
+		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+		if(!CurrentSaveGame)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Load Save Game Failed!"));
+			return;
+		}
+
+		for(FActorIterator It(GetWorld()); It; ++It)
+		{
+			AActor* Actor = *It;
+
+			// 判断Actor是否实现了USGamePlayInterface接口
+			if(!Actor->Implements<USGamePlayInterface>())
+			{
+				continue;
+			}
+
+			for (FActorSaveData ActorData : CurrentSaveGame->SavedActors)
+			{
+				if(ActorData.ActorName == Actor->GetName())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("ActorName:%s, ActorPosition:%f, %f, %f "), *(Actor->GetName()), Actor->GetActorLocation().X, Actor->GetActorLocation().Y, Actor->GetActorLocation().Z)
+					Actor->SetActorTransform(ActorData.Transform);
+					break;
+				}
+			}
+		}
+		
+		UE_LOG(LogTemp, Log, TEXT("Load Save Game From Slot!"));
+	}
+	else
+	{
+		CurrentSaveGame = Cast<USSaveGame>(UGameplayStatics::CreateSaveGameObject(USSaveGame::StaticClass()));
+		
+		UE_LOG(LogTemp, Log, TEXT("Create New Save Game Object!"));
 	}
 }
 
@@ -64,11 +166,13 @@ void ASGameModeBase::OnActorKilled(AActor* RespawnActor, AActor* Killer)
 	ASCharacter* RespawnCharacter = Cast<ASCharacter>(RespawnActor);
 	if(RespawnCharacter)
 	{
+		WriteSaveGame();
+		
 		FTimerDelegate RespawnDelegate;
 		RespawnDelegate.BindUFunction(this, "OnRespawnActorElapsed", RespawnCharacter->GetController());
 	
 		FTimerHandle TimerHandle_RespawnDelay;
-		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, RespawnDelegate, 2.0f, false);
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, RespawnDelegate, 10.0f, false);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("OnActorKiller: %s be killed by %s"), *GetNameSafe(RespawnActor), *GetNameSafe(Killer));

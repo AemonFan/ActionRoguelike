@@ -6,7 +6,9 @@
 #include "GameFramework/PlayerState.h"
 #include "SPlayerState.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCreditsValueChanged, APlayerState*, PlayerState, int, NewCredits, int, Delat);
+class USSaveGame;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCreditsValueChanged, APlayerState*, PlayerState, int, NewCredits, int,
+                                               Delat);
 
 /**
  * 
@@ -22,7 +24,7 @@ public:
 
 protected:
 
-	UPROPERTY(VisibleAnywhere, Category="Credits")
+	UPROPERTY(EditDefaultsOnly, ReplicatedUsing="OnRep_Credits", Category="Credits")
 	int Credits;
 
 	UPROPERTY(EditAnywhere, Category="Credits")
@@ -34,7 +36,7 @@ public:
 	FCreditsValueChanged OnCreditsValueChange;
 	
 	UFUNCTION(BlueprintCallable, Category="Credits")
-	int GetCredits()
+	int GetCredits() const
 	{
 		return Credits;
 	}
@@ -47,4 +49,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Credits")
 	static ASPlayerState* GetPlayerState(APawn* Pawn);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(USSaveGame* InSaveGameObject);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(USSaveGame* InSaveGameObject);
+
+	UFUNCTION()
+	void OnRep_Credits(int32 OldCredits);
 };

@@ -21,7 +21,7 @@ void USAction::StartAction_Implementation(AActor* InstigatorActor)
 	UE_LOG(LogTemp, Warning, TEXT("%s Runnning Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
 	
 	FString DebugMessage = GetNameSafe(InstigatorActor) + " StartAction : " + *GetNameSafe(this);
-	GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Yellow, DebugMessage);
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, DebugMessage);
 	
 	if(ensure(ActionComp))
 	{
@@ -37,7 +37,7 @@ void USAction::StopAction_Implementation(AActor* InstigatorActor)
 	UE_LOG(LogTemp, Warning, TEXT("%s Stop Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
 
 	FString DebugMessage = GetNameSafe(InstigatorActor) + " StopAction : " + *GetNameSafe(this);
-	GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Red, DebugMessage);
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, DebugMessage);
 	
 	if(ensure(ActionComp))
 	{

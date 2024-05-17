@@ -7,6 +7,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "SGameModeBase.generated.h"
 
+class USSaveGame;
 class ASPowerup_Coin;
 class UEnvQueryInstanceBlueprintWrapper;
 class UEnvQuery;
@@ -21,6 +22,14 @@ class ACTIONROGUELIKE_API ASGameModeBase : public AGameModeBase
 public:
 	ASGameModeBase();
 
+protected:
+
+	USSaveGame* CurrentSaveGame;
+
+	FString SlotName;
+	
+public:
+	
 	UPROPERTY(EditAnywhere, Category="AI")
 	float SpawnBotMax;
 	
@@ -53,7 +62,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Powerups")
 	int DesiredPowerupCount;
 
+	void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
 	virtual void StartPlay() override;
+
+	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
+	UFUNCTION(BlueprintCallable, Category="SaveGame")
+	void WriteSaveGame();
+
+	void LoadSaveGame();
 
 	UFUNCTION(Exec, BlueprintCallable)
 	void KillAllAI();

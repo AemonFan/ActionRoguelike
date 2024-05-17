@@ -86,7 +86,8 @@ void ASCharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCompo
 		// Add Rage
 		AttributeComp->RageGained(InstigatorActor, AttributeComp->GetRageRate() * Delta * (-1));
 	}
-	
+
+	// Player Died
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
 		// Disable Player Input
@@ -95,13 +96,15 @@ void ASCharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCompo
 		{
 			DisableInput(PC);
 		}
+
+		SetLifeSpan(5.0f);
 	
-		// Disable Collision
-		SetActorEnableCollision(false);
-		
-		FTimerDelegate ActorDeadDelegate;
-		ActorDeadDelegate.BindUFunction(this, "OnActorDead", InstigatorActor);
-		GetWorldTimerManager().SetTimer(TimerHandle_CharacterDead, ActorDeadDelegate, 2.0f, false);
+		// // Disable Collision
+		// SetActorEnableCollision(false);
+		//
+		// FTimerDelegate ActorDeadDelegate;
+		// ActorDeadDelegate.BindUFunction(this, "OnActorDead", InstigatorActor);
+		// GetWorldTimerManager().SetTimer(TimerHandle_CharacterDead, ActorDeadDelegate, 2.0f, false);
 	}
 }
 

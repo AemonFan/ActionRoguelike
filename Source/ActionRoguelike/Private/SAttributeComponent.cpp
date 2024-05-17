@@ -40,6 +40,7 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	// 伤害倍数
 	if(Delta < 0.0f)
 	{
+		// su.DamageMultiplier : 伤害倍数，由控制台输入，仅用于开发测试使用
 		float damageMultply = CVarDamageMultiplier.GetValueOnGameThread();
 		Delta *= damageMultply;
 		UE_LOG(LogTemp, Warning, TEXT("damageMultply: %f, Delta:%f"), damageMultply, Delta);
@@ -48,6 +49,7 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	float oldHealth = Health;
 	float NewHealth = FMath::Clamp(Health + Delta, 0.0f, MaxHealth);
 
+	// Run On Server
 	if(GetOwner()->HasAuthority())
 	{
 		Health = NewHealth;
