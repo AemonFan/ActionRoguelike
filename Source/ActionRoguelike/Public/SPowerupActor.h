@@ -26,7 +26,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
 	UStaticMeshComponent* MeshComp;
 
-	UPROPERTY(EditAnywhere, Category="Powerup");
+	UPROPERTY(EditAnywhere, ReplicatedUsing="OnRep_IsActive", Category="Powerup");
 	bool bIsActive;
 	
 	UPROPERTY(EditAnywhere, Category="Powerup");
@@ -45,4 +45,6 @@ public:
 
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 
+	UFUNCTION()
+	void OnRep_IsActive();
 };

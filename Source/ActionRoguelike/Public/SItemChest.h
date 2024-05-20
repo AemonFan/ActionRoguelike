@@ -14,8 +14,6 @@ public:
 	
 	ASItemChest();
 
-	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
-	
 protected:
 
 	UPROPERTY(visibleAnywhere)
@@ -27,11 +25,24 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float TargetPitchValue;
 
-	UPROPERTY(ReplicatedUsing="OnRep_LidOpen", BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing="OnRep_LidOpen", SaveGame, BlueprintReadOnly)
 	bool bLidOpen;
+
+public:
+
+	bool GetLidOpenState() const
+	{
+		return bLidOpen;
+	}
+	
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
+	
+	virtual void OnActorLoaded_Implementation() override;
+
 	
 protected:
 
 	UFUNCTION()
 	void OnRep_LidOpen(); // RepNotify
+
 };

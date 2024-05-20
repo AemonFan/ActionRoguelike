@@ -17,6 +17,7 @@
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 
 static TAutoConsoleVariable<bool> CVarSpawnBots(TEXT("su.SpawnBots"), true, TEXT("Enable spawning of bots via timer."), ECVF_Cheat);
 
@@ -100,6 +101,13 @@ void ASGameModeBase::WriteSaveGame()
 		FActorSaveData ActorData;
 		ActorData.Transform = Actor->GetTransform();
 		ActorData.ActorName = Actor->GetName();
+
+		FMemoryWriter MemoryWriter(ActorData.ByteData); 
+		FObjectAndNameAsStringProxyArchive Ar(MemoryWriter, true);
+		// Find only variables with UPROPERTY(SaveGame)
+		Ar.ArIsSaveGame = true;
+		Actor->Serialize(Ar);
+		
 		CurrentSaveGame->SavedActors.Add(ActorData);
 	}
 	
@@ -133,6 +141,16 @@ void ASGameModeBase::LoadSaveGame()
 				{
 					UE_LOG(LogTemp, Warning, TEXT("ActorName:%s, ActorPosition:%f, %f, %f "), *(Actor->GetName()), Actor->GetActorLocation().X, Actor->GetActorLocation().Y, Actor->GetActorLocation().Z)
 					Actor->SetActorTransform(ActorData.Transform);
+
+					FMemoryReader MemoryReader(ActorData.ByteData); 
+					FObjectAndNameAsStringProxyArchive Ar(MemoryReader, true);
+					// Find only variables with UPROPERTY(SaveGame)
+					Ar.ArIsSaveGame = true;
+					// Convert binary array back into actor's variables
+					Actor->Serialize(Ar);
+
+					ISGamePlayInterface::Execute_OnActorLoaded(Actor);
+					
 					break;
 				}
 			}

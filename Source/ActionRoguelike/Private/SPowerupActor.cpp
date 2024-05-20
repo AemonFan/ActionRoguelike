@@ -3,6 +3,7 @@
 
 #include "SPowerupActor.h"
 #include "components/SphereComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ASPowerupActor::ASPowerupActor()
@@ -39,13 +40,25 @@ void ASPowerupActor::SetPowerupState(bool bNewIsActive)
 {
 	bIsActive = bNewIsActive;
 
+	OnRep_IsActive();
+}
+
+void ASPowerupActor::Interact_Implementation(APawn* InstigatorPawn)
+{
+	
+}
+
+void ASPowerupActor::OnRep_IsActive()
+{
 	// 碰撞状态
 	SetActorEnableCollision(bIsActive);
 	// 可视化状态
 	RootComponent->SetVisibility(bIsActive, true);
 }
 
-void ASPowerupActor::Interact_Implementation(APawn* InstigatorPawn)
+void ASPowerupActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASPowerupActor, bIsActive);
 }
