@@ -17,10 +17,8 @@ class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+	
 	ASAICharacter();
-
-	UFUNCTION()
-	void HealAISelf(float HealValue = 0.0f);
 
 protected:
 
@@ -52,6 +50,13 @@ protected:
 
 	FName TargetActorKey;
 
+public:
+	
+	UFUNCTION()
+	void HealAISelf(float HealValue = 0.0f);
+
+protected:
+	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
@@ -63,6 +68,9 @@ protected:
 	UFUNCTION()
 	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastPawnSeen();
+	
 	void SetTargetActor(AActor* NewTargetActor);
 
 	AActor* GetTargetActor() const;

@@ -56,25 +56,13 @@ void ASAICharacter::PostInitializeComponents()
 
 void ASAICharacter::OnSeePawn(APawn* Pawn)
 {
-	if(GetTargetActor() == Pawn)
+	AActor* CurrentSeenActor = GetTargetActor();
+	if(CurrentSeenActor != Cast<AActor>(Pawn))
 	{
-		return;
-	}
+		SetTargetActor(Cast<AActor>(Pawn));
 	
-	SetTargetActor(Cast<AActor>(Pawn));
-	
-	if(PlayerSpottedWidgetClass)
-	{
-		USWorldUserWidget* Widget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
-		
-		if(Widget)
-		{
-			Widget->AttachToActor = this;
-			Widget->AddToViewport(10);
-		}
+		MulticastPawnSeen();
 	}
-
-	//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYR SPOTTED", nullptr, FColor::White, 4.0f, true, 1);
 }
 
 void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
@@ -106,6 +94,22 @@ void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCom
 	if(NewHealth <= 0.0f)
 	{
 		ActorDead(InstigatorActor);
+	}
+}
+
+void ASAICharacter::MulticastPawnSeen_Implementation()
+{
+	if(PlayerSpottedWidgetClass)
+	{
+		USWorldUserWidget* Widget = CreateWidget<USWorldUserWidget>(GetWorld(), PlayerSpottedWidgetClass);
+		
+		if(Widget)
+		{
+			Widget->AttachToActor = this;
+			Widget->AddToViewport(10);
+		}
+		
+		//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYR SPOTTED", nullptr, FColor::White, 4.0f, true, 1);
 	}
 }
 

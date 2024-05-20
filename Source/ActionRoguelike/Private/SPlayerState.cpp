@@ -76,8 +76,6 @@ void ASPlayerState::LoadPlayerState_Implementation(USSaveGame* InSaveGameObject)
 {
 	if(InSaveGameObject)
 	{
-		//Credits = InSaveGameObject->Credits;
-
-		AddCredits(InSaveGameObject->Credits);
+		AddCredits(InSaveGameObject->Credits); //Credits = InSaveGameObject->Credits;
 	}
 }

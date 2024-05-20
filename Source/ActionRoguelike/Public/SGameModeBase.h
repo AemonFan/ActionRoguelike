@@ -24,6 +24,7 @@ public:
 
 protected:
 
+	UPROPERTY()
 	USSaveGame* CurrentSaveGame;
 
 	FString SlotName;
@@ -62,11 +63,14 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Powerups")
 	int DesiredPowerupCount;
 
-	void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+public:
+	
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
 	virtual void StartPlay() override;
-
-	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+	
+	/** Signals that a player is ready to enter the game, which may start it up */
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 
 	UFUNCTION(BlueprintCallable, Category="SaveGame")
 	void WriteSaveGame();
