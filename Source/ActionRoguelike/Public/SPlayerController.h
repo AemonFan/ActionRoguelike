@@ -20,7 +20,15 @@ class ACTIONROGUELIKE_API ASPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+public:
+
+	UPROPERTY(EditDefaultsOnly, Category="UI")
+	TSubclassOf<UUserWidget> PauseMenuClass;
+
 protected:
+
+	UPROPERTY()
+	UUserWidget* PauseMenuInstance;
 
 	// Member variable declaration: 'PlayerState' cannot be defined in 'SPlayerController' as it is already defined in scope 'Class /Script/Engine.Controller' (shadowing is not allowed)
 	// UPROPERTY(ReplicatedUsing="OnRep_PlayerState")
@@ -29,12 +37,12 @@ protected:
 	UPROPERTY(BlueprintAssignable)
 	FOnPawnChanged OnPawnChanged;
 
-	virtual void SetPawn(APawn* InPawn) override;
-	
 	// 监听到来的PlayerState (对于客户端来说，在刚加入游戏的时候PlayerState可能是空指针, 
 	// 获得之后PlayerState不会再变化因为PlayerController在同一个关卡中保持PlayerState的状态)
 	UPROPERTY(BlueprintAssignable)
 	FOnPlayerStateChanged OnPlayerStateReceived;
+	
+	virtual void SetPawn(APawn* InPawn) override;
 	
 	/* 当PlayerController准备好开始游戏的时候调用, 初始化UI之类与游戏数据有关的对象的好时机
 			(特别是在多人游戏中客户端可能没有足够多的信息，因为PlayerState还没有收到) */
@@ -45,4 +53,9 @@ protected:
 
 	// defined in parent class : AController
 	virtual void OnRep_PlayerState() override;
+
+	UFUNCTION(BlueprintCallable)
+	void TogglePauseMenu();
+
+	virtual void SetupInputComponent() override;
 };
