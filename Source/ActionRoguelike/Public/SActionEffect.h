@@ -18,16 +18,12 @@ public:
 
 	USActionEffect();
 
-	virtual void StartAction_Implementation(AActor* InstigatorActor) override;
-
-	virtual void StopAction_Implementation(AActor* InstigatorActor) override;
-
 protected:
 
-	UPROPERTY(EditDefaultsOnly, Category="Action")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
 	float Duration;
 
-	UPROPERTY(EditDefaultsOnly, Category="Action")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
 	float Period;
 
 	FTimerHandle Duration_TimerHandle;
@@ -36,4 +32,18 @@ protected:
 	
 	UFUNCTION(BlueprintNativeEvent, Category="Action")
 	void ExecutePeriodicEffect(AActor* InstigatorActor);
+
+public:
+	
+	virtual void StartAction_Implementation(AActor* InstigatorActor) override;
+
+	virtual void StopAction_Implementation(AActor* InstigatorActor) override;
+
+	float GetDuration() const
+	{
+		return Duration;
+	}
+	
+	UFUNCTION(BlueprintCallable)
+	float GetActionTimeRemaining() const;
 };
