@@ -4,6 +4,7 @@
 #include "SActionEffect.h"
 
 #include "SActionComponent.h"
+#include "GameFramework/GameStateBase.h"
 
 USActionEffect::USActionEffect()
 {
@@ -55,8 +56,15 @@ void USActionEffect::StopAction_Implementation(AActor* InstigatorActor)
 
 float USActionEffect::GetActionTimeRemaining() const
 {
-	float ActionEndTime = ActionStartTime + Duration;
-	return ActionEndTime - GetWorld()->TimeSeconds;
+	AGameStateBase* GameState = GetWorld()->GetGameState<AGameStateBase>();
+	if(GameState)
+	{
+		float ActionEndTime = ActionStartTime + Duration;
+		return ActionEndTime - GameState->GetServerWorldTimeSeconds();
+		
+	}
+
+	return Duration;
 }
 
 void USActionEffect::ExecutePeriodicEffect_Implementation(AActor* InstigatorActor)

@@ -42,7 +42,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Action")
 	bool bIsAutoStart;
 
-	UPROPERTY(EditDefaultsOnly, Category="Action")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Action")
 	FName ActionName;
 
 	UPROPERTY(Replicated)
@@ -56,7 +56,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Tags")
 	FGameplayTagContainer BlockedTags;
 	
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	float ActionStartTime;
 
 public:
