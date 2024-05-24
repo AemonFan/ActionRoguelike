@@ -16,7 +16,6 @@ class ACTIONROGUELIKE_API ASAIController : public AAIController
 
 protected:
 
-	
 	UPROPERTY(EditAnywhere, Category="AI")
 	UBehaviorTree* BeHaviorTree;
 

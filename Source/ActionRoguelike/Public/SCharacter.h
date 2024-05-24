@@ -90,9 +90,6 @@ public:
 	UFUNCTION()
 	void OnHealthValueChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 	
-	UFUNCTION()
-	void OnActorDead(AActor* Killer);
-
 	UFUNCTION(Exec)
 	void HealSelf(float Amount = 100.0f);
 

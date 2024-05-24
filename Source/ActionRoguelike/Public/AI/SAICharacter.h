@@ -37,18 +37,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Effets")
 	FName HitFlashParamName;
 
+	UPROPERTY(VisibleAnywhere, Category="Effets")
+	FName TargetActorKey;
+
 	UPROPERTY(EditDefaultsOnly, Category="UI")
-	TSubclassOf<UUserWidget> UserWidgetClass;
+	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 	
 	UPROPERTY(EditDefaultsOnly, Category="UI")
 	TSubclassOf<UUserWidget> PlayerSpottedWidgetClass;
 	
-	FTimerHandle TimerHandle_CheckLowHealth;
-
 	UPROPERTY()
-	USWorldUserWidget* UserWidgetUI;
-
-	FName TargetActorKey;
+	USWorldUserWidget* HealthBarWidgetUI;
 
 public:
 	

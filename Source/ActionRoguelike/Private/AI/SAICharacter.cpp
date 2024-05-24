@@ -9,7 +9,6 @@
 #include "MovieSceneTimeHelpers.h"
 #include "SActionComponent.h"
 #include "SAttributeComponent.h"
-#include "SGameModeBase.h"
 #include "SWorldUserWidget.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"
@@ -57,9 +56,9 @@ void ASAICharacter::PostInitializeComponents()
 void ASAICharacter::OnSeePawn(APawn* Pawn)
 {
 	AActor* CurrentSeenActor = GetTargetActor();
-	if(CurrentSeenActor != Cast<AActor>(Pawn))
+	if(CurrentSeenActor != Pawn)
 	{
-		SetTargetActor(Cast<AActor>(Pawn));
+		SetTargetActor(Pawn);
 	
 		MulticastPawnSeen();
 	}
@@ -74,13 +73,13 @@ void ASAICharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCom
 	}
 
 	// show health bar
-	if(!UserWidgetUI)
+	if(!HealthBarWidgetUI)
 	{
-		UserWidgetUI = CreateWidget<USWorldUserWidget>(GetWorld(), UserWidgetClass);
-		if(UserWidgetUI)
+		HealthBarWidgetUI = CreateWidget<USWorldUserWidget>(GetWorld(), HealthBarWidgetClass);
+		if(HealthBarWidgetUI)
 		{
-			UserWidgetUI->AttachToActor = this;
-			UserWidgetUI->AddToViewport();
+			HealthBarWidgetUI->AttachToActor = this;
+			HealthBarWidgetUI->AddToViewport();
 		}
 	}
 
@@ -131,11 +130,11 @@ void ASAICharacter::SetTargetActor(AActor* NewTargetActor)
 	{
 		return;
 	}
-	
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if(ensure(AIController))
+
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if(AIC)
 	{
-		UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
+		UBlackboardComponent* BBComp = AIC->GetBlackboardComponent();
 		if(BBComp)
 		{
 			BBComp->SetValueAsObject("TargetActor", NewTargetActor);
@@ -156,11 +155,11 @@ AActor* ASAICharacter::GetTargetActor() const
 void ASAICharacter::ActorDead(AActor* Killer)
 {
 	// Stop Run BehaviorTree
-	AAIController* AIController = Cast<AAIController>(GetController());
-	if(AIController)
+	AAIController* AIC = Cast<AAIController>(GetController());
+	if(AIC)
 	{
 		// Reason : Just used to debug.
-		AIController->GetBrainComponent()->StopLogic("Killed");
+		AIC->GetBrainComponent()->StopLogic("Killed");
 	}
 
 	// Ragdoll
@@ -172,10 +171,4 @@ void ASAICharacter::ActorDead(AActor* Killer)
 
 	// Set lifespan
 	SetLifeSpan(10.0f);
-
-	ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
-	if(GameMode)
-	{
-		GameMode->OnAIActorKilled(Killer);
-	}
 }

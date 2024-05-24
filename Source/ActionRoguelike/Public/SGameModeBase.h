@@ -80,10 +80,8 @@ public:
 	UFUNCTION(Exec, BlueprintCallable)
 	void KillAllAI();
 
-	void OnActorKilled(AActor* RespawnActor, AActor* Killer);
+	void OnActorKilled(AActor* VictimActor, AActor* Killer);
 
-	void OnAIActorKilled(AActor* InstigatorActor);
-	
 protected:
 
 	UFUNCTION()

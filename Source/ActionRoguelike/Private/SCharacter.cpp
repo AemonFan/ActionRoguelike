@@ -98,27 +98,6 @@ void ASCharacter::OnHealthValueChanged(AActor* InstigatorActor, USAttributeCompo
 		}
 
 		SetLifeSpan(5.0f);
-	
-		// // Disable Collision
-		// SetActorEnableCollision(false);
-		//
-		// FTimerDelegate ActorDeadDelegate;
-		// ActorDeadDelegate.BindUFunction(this, "OnActorDead", InstigatorActor);
-		// GetWorldTimerManager().SetTimer(TimerHandle_CharacterDead, ActorDeadDelegate, 2.0f, false);
-	}
-}
-
-void ASCharacter::OnActorDead(AActor* Killer)
-{
-	GetWorldTimerManager().ClearTimer(TimerHandle_CharacterDead);
-
-	// Hide Character
-	GetRootComponent()->SetVisibility(false, true);
-	
-	ASGameModeBase* GameMode = GetWorld()->GetAuthGameMode<ASGameModeBase>();
-	if(GameMode)
-	{
-		GameMode->OnActorKilled(this, Killer);
 	}
 }
 

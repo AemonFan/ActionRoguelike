@@ -179,36 +179,34 @@ void ASGameModeBase::KillAllAI()
 	}
 }
 
-void ASGameModeBase::OnActorKilled(AActor* RespawnActor, AActor* Killer)
+void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
-	ASCharacter* RespawnCharacter = Cast<ASCharacter>(RespawnActor);
-	if(RespawnCharacter)
+	// ASAICharacter kill ASCharacter
+	ASCharacter* Player = Cast<ASCharacter>(VictimActor);
+	if(Player)
 	{
 		WriteSaveGame();
 		
 		FTimerDelegate RespawnDelegate;
-		RespawnDelegate.BindUFunction(this, "OnRespawnActorElapsed", RespawnCharacter->GetController());
+		RespawnDelegate.BindUFunction(this, "OnRespawnActorElapsed", Player->GetController());
 	
 		FTimerHandle TimerHandle_RespawnDelay;
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, RespawnDelegate, 10.0f, false);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("OnActorKiller: %s be killed by %s"), *GetNameSafe(RespawnActor), *GetNameSafe(Killer));
-}
-
-void ASGameModeBase::OnAIActorKilled(AActor* Killer)
-{
-	ASCharacter* Pawn = Cast<ASCharacter>(Killer);
-	if(Pawn)
+	// ASCharacter kill ASAICharacter
+	APawn* KillerPawn = Cast<APawn>(Killer);
+	if(KillerPawn && KillerPawn != VictimActor)
 	{
-		ASPlayerState* PlayerState = ASPlayerState::GetPlayerState(Pawn);
+		// Only Players will have a 'PlayerState' instance, bots have nullptr
+		ASPlayerState* PlayerState = ASPlayerState::GetPlayerState(KillerPawn);
 		if(PlayerState)
 		{
 			PlayerState->AddCredits(CreditsPerKill);
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("OnAIActorKilled: AI be killed by %s"), *GetNameSafe(Killer));
+	UE_LOG(LogTemp, Warning, TEXT("OnActorKiller: %s be killed by %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
 }
 
 void ASGameModeBase::OnRespawnActorElapsed(AController* RespawnController)
