@@ -13,48 +13,33 @@ void USAction::Initialize(USActionComponent* InActionComp)
 
 void USAction::StartAction_Implementation(AActor* InstigatorActor)
 {
-	if(!IsCanStartAction(InstigatorActor))
-	{
-		return;
-	}
-	
-	UE_LOG(LogTemp, Warning, TEXT("%s Runnning Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
-	
-	FString DebugMessage = GetNameSafe(InstigatorActor) + " StartAction : " + *GetNameSafe(this);
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, DebugMessage);
-	
-	if(ensure(ActionComp))
-	{
-		ActionComp->ActiveGameplayTags.AppendTags(GrantsTags);
-		
-		GetOwningComponent()->OnActionStarted.Broadcast(ActionComp, this);
-	}
+	UE_LOG(LogTemp, Log, TEXT("Started Action: %s"), *GetNameSafe(this));
+	//LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
+
+	ActionComp->ActiveGameplayTags.AppendTags(GrantsTags);
 
 	RepData.bIsRunning = true;
 	RepData.Instigator = InstigatorActor;
 
-	if(GetOwningComponent()->GetOwnerRole() == ROLE_Authority)
+	if (ActionComp->GetOwnerRole() == ROLE_Authority)
 	{
 		ActionStartTime = GetWorld()->TimeSeconds;
 	}
+
+	ActionComp->OnActionStarted.Broadcast(ActionComp, this);
 }
 
 void USAction::StopAction_Implementation(AActor* InstigatorActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s Stop Action %s"), *GetNameSafe(InstigatorActor), *GetNameSafe(this));
+	UE_LOG(LogTemp, Log, TEXT("Stopped Action: %s"), *GetNameSafe(this));
+	//LogOnScreen(this, FString::Printf(TEXT("Stopped: %s"), *ActionName.ToString()), FColor::White);
 
-	FString DebugMessage = GetNameSafe(InstigatorActor) + " StopAction : " + *GetNameSafe(this);
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, DebugMessage);
-	
-	if(ensure(ActionComp))
-	{
-		ActionComp->ActiveGameplayTags.RemoveTags(GrantsTags);
-		
-		GetOwningComponent()->OnActionStopped.Broadcast(ActionComp, this);
-	}
-	
+	ActionComp->ActiveGameplayTags.RemoveTags(GrantsTags);
+
 	RepData.bIsRunning = false;
-	RepData.Instigator = nullptr;
+	RepData.Instigator = InstigatorActor;
+
+	ActionComp->OnActionStopped.Broadcast(ActionComp, this);
 }
 
 bool USAction::IsCanStartAction(AActor* InstigatorActor)
@@ -79,11 +64,10 @@ USActionComponent* USAction::GetOwningComponent() const
 
 UWorld* USAction::GetWorld() const
 {
-	// 获取当前对象绑定的组件，通过组件GetWorld
-	//UActorComponent* Comp = Cast<UActorComponent>(GetOuter());
-	if(ActionComp)
+	AActor* Actor = Cast<AActor>(GetOuter());
+	if (Actor)
 	{
-		return ActionComp->GetWorld();
+		return Actor->GetWorld();
 	}
 	
 	return nullptr;

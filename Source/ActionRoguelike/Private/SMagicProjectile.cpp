@@ -3,11 +3,11 @@
 #include "SMagicProjectile.h"
 
 #include "SActionComponent.h"
-#include "SAttributeComponent.h"
 #include "SGameplayFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 #include "components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "SActionEffect.h"
 
 ASMagicProjectile::ASMagicProjectile()
 {
@@ -21,7 +21,7 @@ ASMagicProjectile::ASMagicProjectile()
 void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ASMagicProjectile::OnActorOverlap OtherActor:%s, Damage:%f"), *GetNameSafe(OtherActor), Damage);
+	UE_LOG(LogTemp, Warning, TEXT("%s Overlap OtherActor:%s, Damage:%f"), *GetNameSafe(this), *GetNameSafe(OtherActor), Damage);
 	
 	if(OtherActor && OtherActor != GetInstigator()) // 确保角色自己生成的投射物不会对自己造成伤害
 	{
@@ -40,9 +40,9 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			Explode();
 
-			if(ActionComp && HasAuthority())
+			if(ActionComp && BuringActionClass && HasAuthority())
 			{
-				ActionComp->AddAction(GetInstigator(), ActionClass);
+				ActionComp->AddAction(GetInstigator(), BuringActionClass);
 			}
 		}
 	}
