@@ -14,7 +14,6 @@ void USAction::Initialize(USActionComponent* InActionComp)
 void USAction::StartAction_Implementation(AActor* InstigatorActor)
 {
 	UE_LOG(LogTemp, Log, TEXT("Started Action: %s"), *GetNameSafe(this));
-	//LogOnScreen(this, FString::Printf(TEXT("Started: %s"), *ActionName.ToString()), FColor::Green);
 
 	ActionComp->ActiveGameplayTags.AppendTags(GrantsTags);
 
@@ -32,7 +31,6 @@ void USAction::StartAction_Implementation(AActor* InstigatorActor)
 void USAction::StopAction_Implementation(AActor* InstigatorActor)
 {
 	UE_LOG(LogTemp, Log, TEXT("Stopped Action: %s"), *GetNameSafe(this));
-	//LogOnScreen(this, FString::Printf(TEXT("Stopped: %s"), *ActionName.ToString()), FColor::White);
 
 	ActionComp->ActiveGameplayTags.RemoveTags(GrantsTags);
 
