@@ -45,6 +45,8 @@ public:
 
 	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 
+	virtual FText GetInteractMessageText_Implementation(APawn* InstigatorPawn) override;
+	
 	UFUNCTION()
 	void OnRep_IsActive();
 };

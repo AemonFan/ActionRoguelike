@@ -48,6 +48,11 @@ void ASPowerupActor::Interact_Implementation(APawn* InstigatorPawn)
 	
 }
 
+FText ASPowerupActor::GetInteractMessageText_Implementation(APawn* InstigatorPawn)
+{
+	return FText::GetEmpty();
+}
+
 void ASPowerupActor::OnRep_IsActive()
 {
 	// 碰撞状态

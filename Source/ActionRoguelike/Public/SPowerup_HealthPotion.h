@@ -27,6 +27,8 @@ protected:
 	float HealthHeal;
 
 public:
-	void Interact_Implementation(APawn* InstigatorPawn) override;
 	
+	void Interact_Implementation(APawn* InstigatorPawn) override;
+
+	FText GetInteractMessageText_Implementation(APawn* InstigatorPawn) override;
 };

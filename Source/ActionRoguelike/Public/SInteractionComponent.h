@@ -37,7 +37,6 @@ protected:
 	UPROPERTY()
 	USWorldUserWidget* DefaultWidgetInstance;
 	
-	
 public:
 	
 	void PrimaryInteract();
