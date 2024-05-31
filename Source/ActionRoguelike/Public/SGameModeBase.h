@@ -29,8 +29,11 @@ public:
 		KillReward = 5.0f;
 	}
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	USMonsterData* MonsterData;
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USMonsterData* MonsterData;*/
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FPrimaryAssetId MonsterId;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Weight;
@@ -71,9 +74,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="AI")
 	UDataTable* MonsterTable;
 	
-	/*UPROPERTY(EditAnywhere, Category="AI")
-	TSubclassOf<AActor> MinionClass;*/
-
 	UPROPERTY(EditAnywhere, Category="AI")
 	UEnvQuery* SpawnQueryBot;
 
@@ -126,6 +126,9 @@ protected:
 
 	UFUNCTION()
 	void OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	UFUNCTION()
+	void OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation);
 
 	UFUNCTION()
 	void OnSpawnPowerupQueryFinished(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);

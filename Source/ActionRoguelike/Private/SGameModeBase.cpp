@@ -7,12 +7,14 @@
 
 #include "EngineUtils.h"
 #include "ModuleDescriptor.h"
+#include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
 #include "SGamePlayInterface.h"
 #include "SPlayerState.h"
 #include "SSaveGame.h"
 #include "AI/SAICharacter.h"
+#include "Engine/AssetManager.h"
 #include "EnvironmentQuery/EnvQuery.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
@@ -273,7 +275,40 @@ void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* 
 			{
 				int index = FMath::RandRange(0, MonsterInfoArray.Num() - 1);
 				FMonsterInfoRow* SelectRow = MonsterInfoArray[index];
-				GetWorld()->SpawnActor<AActor>(SelectRow->MonsterData->MonsterClass, Locations[0], FRotator(0, FMath::FRandRange(0, 360), 0));
+
+				UAssetManager* Manager = UAssetManager::GetIfValid();
+				if(Manager)
+				{
+					TArray<FName> Bundles;
+
+					FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &ASGameModeBase::OnMonsterLoaded, SelectRow->MonsterId, Locations[0]);
+					
+					Manager->LoadPrimaryAsset(SelectRow->MonsterId, Bundles, Delegate);
+				}
+			}
+		}
+	}
+}
+
+void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)
+{
+	UAssetManager* Manager = UAssetManager::GetIfValid();
+	if(Manager)
+	{
+		USMonsterData* MonsterData = Cast<USMonsterData>(Manager->GetPrimaryAssetObject(LoadedId));
+		if(MonsterData)
+		{
+			AActor* SpawnBot = GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass, SpawnLocation, FRotator(0, FMath::FRandRange(0, 360), 0));
+			if(SpawnBot)
+			{
+				USActionComponent* ActionComp = Cast<USActionComponent>(SpawnBot->GetComponentByClass(USActionComponent::StaticClass()));
+				if(ActionComp && MonsterData->Actions.IsValidIndex(0))
+				{
+					for(TSubclassOf<USAction> ActionClass : MonsterData->Actions)
+					{
+						ActionComp->AddAction(SpawnBot, ActionClass);
+					}
+				}
 			}
 		}
 	}
