@@ -3,14 +3,45 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SMonsterData.h"
+#include "Engine/DataTable.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "SGameModeBase.generated.h"
 
+class UDataTable;
 class USSaveGame;
 class ASPowerup_Coin;
 class UEnvQueryInstanceBlueprintWrapper;
 class UEnvQuery;
+
+USTRUCT(BlueprintType)
+struct FMonsterInfoRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+public:
+
+	FMonsterInfoRow()
+	{
+		Weight = 1.0;
+		SpawnCost = 10.0f;
+		KillReward = 5.0f;
+	}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USMonsterData* MonsterData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Weight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float SpawnCost;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float KillReward;
+};
+
 /**
  * 
  */
@@ -37,8 +68,11 @@ public:
 	UPROPERTY(EditAnywhere, Category="AI")
 	float SpawnTimerInterval;
 
-	UPROPERTY(EditAnywhere, Category="AI")
-	TSubclassOf<AActor> MinionClass;
+	UPROPERTY(EditDefaultsOnly, Category="AI")
+	UDataTable* MonsterTable;
+	
+	/*UPROPERTY(EditAnywhere, Category="AI")
+	TSubclassOf<AActor> MinionClass;*/
 
 	UPROPERTY(EditAnywhere, Category="AI")
 	UEnvQuery* SpawnQueryBot;

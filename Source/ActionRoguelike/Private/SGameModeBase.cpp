@@ -265,7 +265,17 @@ void ASGameModeBase::OnSpawnBotQueryFinished(UEnvQueryInstanceBlueprintWrapper* 
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
 	if(Locations.IsValidIndex(0))
 	{
-		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator(0, FMath::FRandRange(0, 360), 0));
+		if(MonsterTable)
+		{
+			TArray<FMonsterInfoRow*> MonsterInfoArray;
+			MonsterTable->GetAllRows("", MonsterInfoArray);
+			if(MonsterInfoArray.IsValidIndex(0))
+			{
+				int index = FMath::RandRange(0, MonsterInfoArray.Num() - 1);
+				FMonsterInfoRow* SelectRow = MonsterInfoArray[index];
+				GetWorld()->SpawnActor<AActor>(SelectRow->MonsterData->MonsterClass, Locations[0], FRotator(0, FMath::FRandRange(0, 360), 0));
+			}
+		}
 	}
 }
 
