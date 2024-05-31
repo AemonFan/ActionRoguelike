@@ -19,6 +19,13 @@ ASPowerupActor::ASPowerupActor()
 
 	bIsActive = true;
 	RespawnTime = 10.0f;
+	
+	// SetReplicates(true); Warning: SetReplicates called on non-initialized actor BP_Powerup_HealthPotion_C_12. Directly setting bReplicates is the correct procedure for pre-init actors.
+}
+
+void ASPowerupActor::BeginPlay()
+{
+	Super::BeginPlay();
 
 	SetReplicates(true);
 }

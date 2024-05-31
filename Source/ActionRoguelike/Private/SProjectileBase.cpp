@@ -35,7 +35,6 @@ ASProjectileBase::ASProjectileBase()
 	ImpactShakeInnerRadius = 0.0f;
 	ImpactShakeOuterRadius = 1500.0f;
 
-	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -43,6 +42,8 @@ void ASProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetReplicates(true);
+	
 	// 添加忽略对象
 	if(GetInstigator())
 	{

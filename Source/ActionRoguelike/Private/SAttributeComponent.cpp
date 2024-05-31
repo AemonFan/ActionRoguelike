@@ -43,7 +43,7 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 		// su.DamageMultiplier : 伤害倍数，由控制台输入，仅用于开发测试使用
 		float damageMultply = CVarDamageMultiplier.GetValueOnGameThread();
 		Delta *= damageMultply;
-		UE_LOG(LogTemp, Warning, TEXT("damageMultply: %f, Delta:%f"), damageMultply, Delta);
+		UE_LOG(LogTemp, Log, TEXT("damageMultply: %f, Delta:%f"), damageMultply, Delta);
 	}
 
 	float oldHealth = Health;
@@ -54,7 +54,7 @@ bool USAttributeComponent::ApplyHealthChange(AActor* InstigatorActor, float Delt
 	{
 		Health = NewHealth;
 
-		UE_LOG(LogTemp, Warning, TEXT("Health is %f"), Health);
+		UE_LOG(LogTemp, Log, TEXT("Health is %f"), Health);
 
 		if(oldHealth != Health)
 		{
@@ -99,7 +99,7 @@ bool USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
 	float oldRage = Rage;
 	Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
 
-	UE_LOG(LogTemp, Warning, TEXT("Rage is %f"), Rage);
+	UE_LOG(LogTemp, Log, TEXT("Rage is %f"), Rage);
 
 	if(oldRage != Rage)
 	{

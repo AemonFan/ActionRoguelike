@@ -39,10 +39,10 @@ public:
 	
 	virtual void OnActorLoaded_Implementation() override;
 
-	
 protected:
 
 	UFUNCTION()
 	void OnRep_LidOpen(); // RepNotify
-
+	
+	virtual void BeginPlay() override;
 };

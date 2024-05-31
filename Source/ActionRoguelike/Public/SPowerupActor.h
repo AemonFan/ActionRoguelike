@@ -33,6 +33,9 @@ protected:
 	float RespawnTime;
 
 	FTimerHandle TimerHandle_RespawnTime;
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 	
 	UFUNCTION()
 	void ShowPowerup();

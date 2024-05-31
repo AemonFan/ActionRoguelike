@@ -13,7 +13,12 @@ ASItemChest::ASItemChest()
 	LidMesh->SetupAttachment(BaseMesh);
 
 	TargetPitchValue = 110.0f;
+}
 
+void ASItemChest::BeginPlay()
+{
+	Super::BeginPlay();
+	
 	SetReplicates(true); // this actor can be replicate
 }
 

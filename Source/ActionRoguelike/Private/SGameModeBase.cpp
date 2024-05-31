@@ -6,7 +6,6 @@
 #include <Actor.h>
 
 #include "EngineUtils.h"
-#include "ModuleDescriptor.h"
 #include "SActionComponent.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
@@ -141,7 +140,7 @@ void ASGameModeBase::LoadSaveGame()
 			{
 				if(ActorData.ActorName == Actor->GetName())
 				{
-					UE_LOG(LogTemp, Warning, TEXT("ActorName:%s, ActorPosition:%f, %f, %f "), *(Actor->GetName()), Actor->GetActorLocation().X, Actor->GetActorLocation().Y, Actor->GetActorLocation().Z)
+					UE_LOG(LogTemp, Log, TEXT("ActorName:%s, ActorPosition:%f, %f, %f "), *(Actor->GetName()), Actor->GetActorLocation().X, Actor->GetActorLocation().Y, Actor->GetActorLocation().Z)
 					Actor->SetActorTransform(ActorData.Transform);
 
 					FMemoryReader MemoryReader(ActorData.ByteData); 
@@ -208,7 +207,7 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("OnActorKiller: %s be killed by %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+	UE_LOG(LogTemp, Log, TEXT("OnActorKiller: %s be killed by %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
 }
 
 void ASGameModeBase::OnRespawnActorElapsed(AController* RespawnController)
