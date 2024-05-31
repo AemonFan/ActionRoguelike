@@ -34,7 +34,7 @@ class ACTIONROGUELIKE_API USAction : public UObject
 public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="UI")
-	UTexture2D* Icon;
+	TSoftObjectPtr<UTexture2D> Icon;
 
 	UPROPERTY(ReplicatedUsing="OnRep_DataChanged")
 	FRepData RepData;
