@@ -21,13 +21,20 @@ void USWorldUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 		return;
 	}
 
-	FVector2D ScreenPosition;
-	if(UGameplayStatics::ProjectWorldToScreen(GetOwningPlayer(), AttachToActor->GetActorLocation() + PositionOffset, ScreenPosition))
+	if(ParentSizeBox)
 	{
-		float Scale = UWidgetLayoutLibrary::GetViewportScale(this);
-		
-		ScreenPosition /= Scale;
+		FVector2D ScreenPosition;
 
-		ParentSizeBox->SetRenderTranslation(ScreenPosition);
+		bool bIsVisibleOnScreen = UGameplayStatics::ProjectWorldToScreen(GetOwningPlayer(), AttachToActor->GetActorLocation() + PositionOffset, ScreenPosition);
+		if(bIsVisibleOnScreen)
+		{
+			float Scale = UWidgetLayoutLibrary::GetViewportScale(this);
+		
+			ScreenPosition /= Scale;
+
+			ParentSizeBox->SetRenderTranslation(ScreenPosition);
+		}
+
+		ParentSizeBox->SetVisibility(bIsVisibleOnScreen ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Collapsed);
 	}
 }

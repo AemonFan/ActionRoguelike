@@ -27,7 +27,7 @@ void ASPowerupActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetReplicates(true);
+	bReplicates = true;
 }
 
 void ASPowerupActor::ShowPowerup()

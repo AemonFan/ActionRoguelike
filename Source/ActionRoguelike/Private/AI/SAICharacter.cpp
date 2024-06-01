@@ -28,8 +28,6 @@ ASAICharacter::ASAICharacter()
 
 	ActionComp = CreateDefaultSubobject<USActionComponent>("ActionComp");
 	
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
-
 	GetMesh()->SetGenerateOverlapEvents(true);
 	
 	CheckLowHealthInterval = 5;
