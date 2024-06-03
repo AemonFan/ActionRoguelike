@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-06-03T09:31:01.678Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="ls-uKVViPrHVD0HaGx7o" version="24.4.13" type="github">
+<mxfile host="app.diagrams.net" modified="2024-06-03T09:31:53.888Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36" etag="YULyUyL4f5Jzu235FUhm" version="24.4.13" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
     <mxGraphModel dx="7803" dy="955" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="6000" pageHeight="2400" math="0" shadow="0">
       <root>
@@ -873,7 +873,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="rqGnG5Bqb2J_hmB-N1td-241" value="BP_GameMode&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-weight: 400;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot;font-weight: 400; background-color: initial;&quot;&gt;在关卡TestLevel的World Setting中指定BP_GameMode作为当前管卡的规则&lt;/span&gt;&lt;span style=&quot;background-color: initial; font-weight: 400;&quot;&gt;)&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=80;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="1030" y="910" width="230" height="140" as="geometry" />
+          <mxGeometry x="970" y="950" width="230" height="140" as="geometry" />
         </mxCell>
         <mxCell id="rqGnG5Bqb2J_hmB-N1td-242" value="+ field: type" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="rqGnG5Bqb2J_hmB-N1td-241">
           <mxGeometry y="80" width="230" height="26" as="geometry" />
@@ -1045,12 +1045,12 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="rqGnG5Bqb2J_hmB-N1td-301" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=bottom;rounded=0;elbow=vertical;entryX=0.375;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" target="rqGnG5Bqb2J_hmB-N1td-264">
+        <mxCell id="rqGnG5Bqb2J_hmB-N1td-301" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=bottom;rounded=0;elbow=vertical;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;exitX=-0.004;exitY=0.677;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="rqGnG5Bqb2J_hmB-N1td-242" target="rqGnG5Bqb2J_hmB-N1td-264">
           <mxGeometry x="-0.9147" y="2" relative="1" as="geometry">
-            <mxPoint x="1030" y="1008" as="sourcePoint" />
-            <mxPoint x="240" y="868" as="targetPoint" />
+            <mxPoint x="960.04" y="1048" as="sourcePoint" />
+            <mxPoint x="170.04000000000002" y="900.0000000000002" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="240" y="1008" />
+              <mxPoint x="260" y="1048" />
             </Array>
             <mxPoint as="offset" />
           </mxGeometry>
