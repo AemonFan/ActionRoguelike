@@ -54,6 +54,12 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("TurnAround", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
+	/*
+	BindAction() 绑定的函数会在输入事件发生时执行，BindAxis() 绑定的函数每帧都会执行
+	BindAction() 用来监听外设是否到达某个状态，BindAxis() 监听的是外设状态的变化量
+	BindAction() 绑定的函数无参数 BindAxis() 绑定的函数有一个参数，该参数就是外设状态的变化量
+	*/
+	
 	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::ProjectileAttack);
 	PlayerInputComponent->BindAction("MagicProticleAttack", IE_Pressed, this, &ASCharacter::SwitchAttack_MagicProjectile);
 	PlayerInputComponent->BindAction("BlackHoleProticleAttack", IE_Pressed, this, &ASCharacter::SwitchAttack_BlackHoleProjectile);
@@ -142,6 +148,7 @@ void ASCharacter::MoveForward(float value)
 	//ControlRot.Yaw
 	ControlRot.Pitch = 0.0f;
 	ControlRot.Roll = 0.0f;
+	// AddMovementInput: ScaleValue – 适用于输入的比例。这可以用于模拟输入，即0.5的值应用正常值的一半，而-1.0将反转方向。
 	AddMovementInput(ControlRot.Vector(), value);
 	// AddMovementInput(GetActorForwardVector(), value);
 }

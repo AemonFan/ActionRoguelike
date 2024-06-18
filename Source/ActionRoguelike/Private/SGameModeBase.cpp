@@ -109,7 +109,8 @@ void ASGameModeBase::WriteSaveGame()
 		ActorData.Transform = Actor->GetTransform();
 		ActorData.ActorName = Actor->GetName();
 
-		FMemoryWriter MemoryWriter(ActorData.ByteData); 
+		FMemoryWriter MemoryWriter(ActorData.ByteData);
+		// 实现一个代理存档，将UObjects和Fname序列化为字符串数据。
 		FObjectAndNameAsStringProxyArchive Ar(MemoryWriter, true);
 		// Find only variables with UPROPERTY(SaveGame)
 		Ar.ArIsSaveGame = true;
